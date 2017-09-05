@@ -1,0 +1,23 @@
+extends ../layout.pug
+block content
+  h2 Asistencia y eventos
+  table.table
+    thead
+      tr
+        th Evento
+        th ID
+        th Nombre
+    tbody
+      each val in eventos
+        tr
+          td= val. date
+          td= val.userid
+          if val.Empleado
+            td= val.Empleado.nombre
+            td= val.Empleado.adscripcion
+          else
+            td= "--"
+            td= "--"
+      else
+        tr
+          td There are no values

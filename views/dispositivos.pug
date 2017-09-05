@@ -1,0 +1,12 @@
+extends layout.pug
+block scripts
+  script(src="/socket.io/socket.io.js")
+  script(src="/javascripts/dispositivos.js")
+block content
+  h2 Dispositivos en línea
+  table.table
+    thead
+      tr
+        th Ubicación
+        th Acciones
+    tbody#online
