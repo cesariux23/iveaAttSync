@@ -1,11 +1,13 @@
 doctype html
 html
+  block vars
+    -var classes = 'container'
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
   body
     include menu.pug
-    section.main.container
+    section(class="main "+ classes)
       block content
       block scripts

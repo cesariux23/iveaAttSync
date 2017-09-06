@@ -9,6 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var asistencia = require('./routes/asistencia');
 var empleados = require('./routes/empleados');
+var lessMiddleware = require('less-middleware');
 
 //timezone para mexico
 process.env.TZ = 'UTC-6';
@@ -26,7 +27,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 // Se hace publico sockets.io
-app.use(express.static(path.join(__dirname,'node_modules'))); 
+app.use(express.static(path.join(__dirname,'node_modules')));
+// Se agrega Less
+app.use(lessMiddleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);

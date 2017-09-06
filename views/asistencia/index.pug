@@ -1,23 +1,175 @@
 extends ../layout.pug
+block vars
+    -var classes = 'container-fluid'
 block content
-  h2 Asistencia y eventos
-  table.table
-    thead
-      tr
-        th Evento
-        th ID
-        th Nombre
-    tbody
-      each val in eventos
-        tr
-          td= val. date
-          td= val.userid
-          if val.Empleado
-            td= val.Empleado.nombre
-            td= val.Empleado.adscripcion
-          else
-            td= "--"
-            td= "--"
-      else
-        tr
-          td There are no values
+  .row
+    nav.left
+      .panel.panel-default#empladosList  
+        .panel-heading
+          a.fav(href='/empleados/registro' title='Registrar')
+              i.fa.fa-plus
+          H4 Empleados
+            
+          .form-group
+            .input-group
+              span.input-group-addon 
+                i.fa.fa-search
+              input.form-control(type="text" placeholder="Buscar")
+        .panel-panel-body
+          ul.nav.nav-pills.nav-stacked
+            each emp in empleados
+              li(role="presentation")
+                a(role="button" data-key=emp.userid)
+                  span.userid= emp.userid
+                  span
+                    span= emp.nombre
+                    br
+                    span= emp.adscripcion
+    .eventos
+      .empleado
+        div
+          b Userid
+          p 428
+          
+        div
+          b Nombre
+          p CESAR ENCARNACION MENDOZA
+        div
+          b Adscripción
+          p RECURSOS HUMANOS
+        div
+          b Entrada
+          p 8:00
+        div
+          b Salida
+          p 15:00
+        div
+          b Tolerancia
+          p 15 mins.
+      .mes
+        button.btn.btn-link
+          i.fa.fa-2x.fa-chevron-left
+        h4.nombre-mes SEPTIEMBRE
+        button.btn.btn-link
+          i.fa.fa-2x.fa-chevron-right
+      .calendario
+        table.table
+          thead
+            tr
+              th L
+              th M
+              th X
+              th J
+              th V
+              th S
+              th D
+          tbody
+            tr
+              td
+                .dia
+                  .num 1
+                  .estado A
+                  .observaciones JUSTIFICANTE MEDICO
+              td
+                .dia
+                  .num 2
+                  .estado.puntualidad P
+              td
+                .dia
+                  .num 3
+                  .estado.inasistencia .
+              td
+                .dia
+                  .num 4
+              td
+                .dia
+                  .num 5
+              td
+                .dia
+                  .num 6
+              td
+                .dia
+                  .num 7
+            tr
+              td
+                .dia
+                  .num 8
+              td
+                .dia
+                  .num 9
+              td
+                .dia
+                  .num 10
+              td
+                .dia
+                  .num 11
+              td
+                .dia
+                  .num 12
+              td
+                .dia
+                  .num 13
+              td
+                .dia
+                  .num 14
+            tr
+              td
+                .dia
+                  .num 15
+              td
+                .dia
+                  .num 16
+              td
+                .dia
+                  .num 17
+              td
+                .dia
+                  .num 18
+              td
+                .dia
+                  .num 19
+              td
+                .dia
+                  .num 20
+              td
+                .dia
+                  .num 21
+            tr
+              td
+                .dia
+                  .num 22
+              td
+                .dia
+                  .num 23
+              td
+                .dia
+                  .num 24
+              td
+                .dia
+                  .num 25
+              td
+                .dia
+                  .num 26
+              td
+                .dia
+                  .num 27
+              td
+                .dia
+                  .num 28
+            tr
+              td
+                .dia
+                  .num 29
+              td
+                .dia
+                  .num 30
+              td
+                .dia
+              td
+                .dia
+              td
+                .dia 
+              td
+                .dia
+              td
+                .dia
