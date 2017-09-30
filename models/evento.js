@@ -1,21 +1,23 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Evento = sequelize.define('Evento', {
-    userid: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'empleados',
-        key: 'userid'
-      }
-    },
+    userid: DataTypes.INTEGER,
     verifyMode: DataTypes.INTEGER,
-    date: DataTypes.DATE,
+    fecha: DataTypes.DATE,
+    anio: DataTypes.INTEGER,
+    mes: DataTypes.INTEGER,
+    dia: DataTypes.INTEGER,
+    hora: DataTypes.INTEGER,
+    minuto: DataTypes.INTEGER,
     zona: DataTypes.STRING
+  }, {
+    indexes: [
+      {
+        unique: true,
+        fields: [ 'userid', 'anio', 'mes', 'dia','fecha','hora','minuto' ]
+      }
+    ]
   });
-
-  Evento.associate = function (models) {
-    Evento.belongsTo(models.Empleado, { foreignKey: 'userid', sourceKey: 'userid'});
-  };
 
   return Evento;
 };

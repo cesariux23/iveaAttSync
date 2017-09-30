@@ -30,12 +30,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname,'node_modules')));
 // Se agrega Less
 app.use(lessMiddleware(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'app/asistencia/dist')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/asistencia', asistencia);
-app.use('/empleados', empleados);
+app.use('/api/asistencia', asistencia);
+app.use('/api/empleados', empleados);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

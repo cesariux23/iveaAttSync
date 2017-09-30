@@ -1,19 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
+var cors = require('cors');
 
-router.get('/', function(req, res, next) {
+router.get('/', cors(), function(req, res, next) {
   models.Empleado.findAll().then(function(empleados) {
-    res.render('empleados/index',{
-      title: 'Empleados',
-      empleados: empleados
-    });
-  });
-});
-
-router.get('/registro', function(req, res, next) {
-  res.render('empleados/new',{
-    title: 'Registro',
+    return res.json(200, {data: empleados});
   });
 });
 
