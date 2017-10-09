@@ -1,0 +1,17 @@
+form(action="/empleados/registro" method="POST")
+  form-group
+    label(for="userid") Id del usuario en checador
+    input.form-control#userid(type="text", name="userid")
+  form-group
+    label(for="rfc") RFC
+    input.form-control#rfc(type="text", name="rfc", placeholder="10 caracteres")
+  form-group
+    label(for="nombre") Nombre Completo del trabajador
+    input.form-control#nombre(type="text", name="nombre")
+  form-group
+    label(for="adscripcion") Adscripción
+    input.form-control#adscripcion(type="text", name="adscripcion")
+  br
+  form-group
+    button.btn.btn-primary(type="submit") GUARDAR
+  
