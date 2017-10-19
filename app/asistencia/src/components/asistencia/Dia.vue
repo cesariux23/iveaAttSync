@@ -4,10 +4,10 @@
       div {{evento.status}}
       div.evt.alert.alert-success(v-if= "evento.entradaEvt" title="Entrada")
         i.fa.fa-sign-in
-        span {{evento.entradaEvt.hora}}: {{evento.entradaEvt.minuto}}
+        span {{evento.entradaEvt.hora | zeroFill}}: {{evento.entradaEvt.minuto | zeroFill}}
       div.evt.alert.alert-info(v-if= "evento.salidaEvt" title="Salida")
         i.fa.fa-sign-out
-        span {{evento.salidaEvt.hora}}: {{evento.salidaEvt.minuto}}  
+        span {{evento.salidaEvt.hora | zeroFill}}: {{evento.salidaEvt.minuto | zeroFill}}  
 </template>
 <script>
   export default {
@@ -19,6 +19,15 @@
           return this.eventos[0]
         }
         return false
+      }
+    },
+    filters: {
+      zeroFill: (numero) => {
+        const width = 2 - numero.toString().length
+        if (width > 0) {
+          return new Array(width + (/\./.test(numero) ? 2 : 1)).join('0') + numero
+        }
+        return numero + '' // siempre devuelve tipo cadena
       }
     }
   }

@@ -8,7 +8,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     rfc: DataTypes.STRING,
     nombre: DataTypes.STRING,
-    adscripcion: DataTypes.STRING
+    adscripcion: DataTypes.STRING,
+    entrada: DataTypes.TIME,
+    salida: DataTypes.TIME,
+    entrada_comer: DataTypes.TIME,
+    salida_comer: DataTypes.TIME,
   });
 
   /*

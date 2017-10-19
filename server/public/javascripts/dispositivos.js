@@ -8,6 +8,10 @@ socket.on('connect', function(data) {
 socket.on('messages', function(data) {
   console.log(data);
 });
+socket.on('logSync', function (data) {
+  console.log('dataaa!');
+  console.log(data);
+});
 socket.on('online', function(data) {
   clients = ''
   console.log(data)

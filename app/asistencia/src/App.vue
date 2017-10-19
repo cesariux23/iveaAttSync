@@ -7,7 +7,6 @@
         <b-nav is-nav-bar>
           <b-nav-item href="#/empleados/registro">Registro de emplado</b-nav-item>
           <b-nav-item href="#/dispositivos">Dispositivos en línea</b-nav-item>
-          <b-nav-item href="#" disabled>Disabled</b-nav-item>
         </b-nav>
       </b-collapse>
     </b-navbar>

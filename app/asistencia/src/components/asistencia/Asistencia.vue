@@ -2,6 +2,7 @@
   section.main
     empleado-list( v-on:selectedEmp="updateSelected")
     .eventos
+      
       div(v-if="empleado")
         .empleado
           div
@@ -16,13 +17,16 @@
             p {{ empleado.adscripcion }}
           div
             b Entrada
-            p 8:00
+            p  {{ empleado.entrada }}
           div
             b Salida
-            p 15:00
+            p  {{ empleado.salida }}
           div
             b Tolerancia
             p 15 mins.
+          div
+            router-link.btn.btn-outline-info(:to="{ name: 'edicionEmpleado', params: { id: empleado.userid }}" title='Registrar')
+              i.fa.fa-pencil
         calendar(v-bind:info="info" v-bind:userid="empleado.userid" v-on:anterior="mesAnterior" v-on:siguiente="mesSiguiente")
       .center.well(v-else) Seleccione un empleado
 
@@ -30,6 +34,7 @@
 <script>
   import list from './EmpleadoList'
   import calendar from './Calendar'
+  import moment from 'moment'
   export default {
     name: 'Asistencia',
     components: {
@@ -62,7 +67,7 @@
         msg: ':p',
         empleado: null,
         info: {
-          mesActual: 9,
+          mesActual: moment().month() + 1,
           anio: 2017
         }
       }

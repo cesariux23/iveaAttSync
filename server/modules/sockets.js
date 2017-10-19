@@ -1,43 +1,9 @@
 var models = require('../models');
-const LIMIT = 5000
+const LIMIT = 500
 
 const processAtt = function (eventos) {
     
         console.log('Procesando los siguientes eventos recibidos: ' + eventos.length);
-        /*
-        return models.sequelize.Promise.map(eventos, function (evento) {
-            return models.Evento.findOrCreate({
-                where: {
-                    userid: evento.userid,
-                    verifyMode: evento.verifyMode,
-                    anio: evento.anio,
-                    mes: evento.mes,
-                    dia: evento.dia,
-                    hora: evento.hora,
-                    minuto: evento.minuto,
-                    fecha: evento.date,
-                    zona: evento.zona
-                }
-            })
-            .spread((evt, created) => {
-                if (created) {
-                    // se genera el registro de la asistencia y se marca para posterior evaluación
-                    models.Asistencia.findOrCreate({
-                        where: {
-                            userid: evt.dataValues.userid,
-                            anio: evt.dataValues.anio,
-                            mes: evt.dataValues.mes,
-                            dia: evt.dataValues.dia
-                        }
-                    }).then( (asistencia) => {
-                        return models.Asistencia.update({ status: 'PENDIENTE_ASOCIACION' }, { where:{ id: asistencia[0].dataValues.id } })
-                    })
-                }
-            })
-            .catch((error) => {
-                console.error('Error : ' + error)
-            })
-        })*/
         return models.Evento.bulkCreate(eventos,{ignoreDuplicates: true})   
     
 }
@@ -53,11 +19,12 @@ module.exports = (czs) =>{
         console.log('Client connected...');
 
         client.on('join', function(data) {
-            coordinaciones[data.zona] = client.id;
+            coordinaciones[data.zona] = {id: client.id, zona: data.zona, mensaje: 'En línea.', online: true};
             clientes.set(client.id, data.zona);
             coords.push(data);
-            console.log(coordinaciones);
             client.emit('messages', 'Conectado');
+            // se publica la lista de coordinaciones actualizada
+            client.broadcast.emit('online', {coordinaciones});
         });
 
         client.on('reqZonas', function(data) {
@@ -67,6 +34,12 @@ module.exports = (czs) =>{
         client.on('reqSync', function(data) {
             client.broadcast.to([data]).emit('getLastEvents', new Date());
         });
+        client.on('sendLogSync', function(data) {
+            if (data.hasOwnProperty('online')) {
+                data.online = false
+            }
+            client.broadcast.emit('logSync', data)
+        });
 
         client.on('sendAttEvents', function(data) {
             const eventos = data.eventos.sort(function(a,b){
@@ -75,8 +48,8 @@ module.exports = (czs) =>{
                 return fa.getTime() - fb.getTime()
             })
             const last = eventos.length > LIMIT ? eventos.slice(eventos.length - LIMIT, eventos.length) : eventos
-
-            console.log(last)
+            const zona =  last[0].zona
+            client.broadcast.emit('logSync', {zona: zona, mensaje: 'Procesando datos recibidos...'})
             return models.sequelize.transaction(function (t) {
             processAtt(last).then((result)=>{
                 const asistencia = last.map((e) => {
@@ -91,6 +64,7 @@ module.exports = (czs) =>{
                 models.Asistencia.bulkCreate(asistencia,{ignoreDuplicates: true})
                 .then(()=> {
                     //sobre las asistencias pendientes se trabaja para asociar eventos con asistencias
+                    client.broadcast.emit('logSync', {zona: zona, mensaje: 'Generando asociación automática...'})
                     models.Asistencia.findAll({
                         where: {
                             status:'PENDIENTE'
@@ -123,6 +97,9 @@ module.exports = (czs) =>{
                                 })
                             })
                         })
+                    })
+                    .finally(function() {
+                        client.broadcast.emit('logSync', {zona: zona, mensaje: 'Sincronización finalizada.', online: true})
                     })
                 })
             })
@@ -176,11 +153,10 @@ module.exports = (czs) =>{
             cz = clientes.get(client.id);
             if(coordinaciones.hasOwnProperty(cz)){
                 delete coordinaciones[cz];
+                coords=coords.splice(coords.lastIndexOf(cz),1);
+                client.broadcast.emit('online',{coordinaciones});
             }
             console.log('cliente desconectado: '+cz);
-            console.log(coordinaciones);
-            coords=coords.splice(coords.lastIndexOf(cz),1);
-            client.broadcast.emit('online',{coordinaciones});
         });
     });
 }

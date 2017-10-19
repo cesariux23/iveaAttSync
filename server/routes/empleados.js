@@ -9,15 +9,22 @@ router.get('/', cors(), function(req, res, next) {
   });
 });
 
-router.post('/registro', function(req, res) {
-  models.Empleado.create({
-    rfc: req.body.rfc,
-    nombre: req.body.nombre,
-    adscripcion: req.body.adscripcion,
-    description: req.body.description,
-    userid: req.body.userid
-  }).then(function() {
-    res.redirect('/empleados');
+router.get('/:id', cors(), function(req, res, next) {
+  models.Empleado.findById(req.params.id).then(function(empleado) {
+    return res.json(200, {data: empleado});
+  });
+});
+router.options('/', cors())
+router.post('/', cors(), function(req, res) {
+  models.Empleado.create(req.body).then(function(empleado) {
+    return res.json(200, {data: empleado});
+  });
+});
+
+router.options('/:id', cors())
+router.patch('/:id', cors(), function(req, res, next) {
+  models.Empleado.update(req.body, { where: { userid: req.params.id } } ).then(function(empleado) {
+    return res.json(200, {data: empleado});
   });
 });
 
