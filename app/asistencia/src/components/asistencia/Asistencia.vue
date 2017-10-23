@@ -28,7 +28,11 @@
             router-link.btn.btn-outline-info(:to="{ name: 'edicionEmpleado', params: { id: empleado.userid }}" title='Registrar')
               i.fa.fa-pencil
         calendar(v-bind:info="info" v-bind:userid="empleado.userid" v-on:anterior="mesAnterior" v-on:siguiente="mesSiguiente")
-      .center.well(v-else) Seleccione un empleado
+      .center.well.empty-data(v-else)
+        div
+          p
+            i.fa.fa-users.fa-5x
+          p Seleccione un empleado de la lista
 
 </template>
 <script>
