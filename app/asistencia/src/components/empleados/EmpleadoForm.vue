@@ -13,7 +13,7 @@
             b-form-input(id="nombre" placeholder="Nombre completo del empleado" v-model="form.nombre" required)
         .col-2
           b-form-group(id="grupoRFc" label="RFC" label-for="rfc")
-            b-form-input(id="rfc" v-model="form.rfc" required)
+            b-form-input(id="rfc" v-model="form.rfc")
         .col
           b-form-group(id="grupo2" label="Adscripción *" label-for="adscripcion")
             b-form-input(id="adscripcion" v-model="form.adscripcion" required)
@@ -33,10 +33,9 @@
           b-form-group(id="grupo5" label="Hora de entrada de comer" label-for="entradacomer")
             b-form-input(id="entradacomer"  type="time" v-model="form.entradacomer")
      
-    .btn-form-group
-      router-link.btn.btn-secondary(:to="{ name: 'asistenciaGeneral'}") Regresar
-      
-      b-button(type="submit" variant="success") {{isPatch? 'Actualizar registro': 'Registrar nuevo empleado'}}
+      .btn-form-group
+        router-link.btn.btn-secondary(:to="{ name: 'asistenciaGeneral'}") Regresar
+        b-button(type="submit" variant="success") {{isPatch? 'Actualizar registro': 'Registrar nuevo empleado'}}
 </template>
 <script>
 export default {

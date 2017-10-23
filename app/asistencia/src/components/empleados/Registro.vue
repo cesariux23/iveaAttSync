@@ -44,7 +44,7 @@
           data
         })
         .then((res) => {
-          alert(res)
+          this.$router.push('/asistencia')
         })
       }
     },
