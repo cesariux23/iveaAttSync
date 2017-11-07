@@ -20,7 +20,7 @@
             span
               span {{emp.nombre}}
               br
-              span.ads.text-secondary {{emp.adscripcion}}
+              span.ads.text-secondary.elipsis {{emp.adscripcion}}
         div(v-if="filteredEmpleados.length === 0") Sin resultados
 </template>
 <script>

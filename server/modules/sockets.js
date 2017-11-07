@@ -1,5 +1,5 @@
 var models = require('../models');
-const LIMIT = 500
+const LIMIT = 10000
 
 const processAtt = function (eventos) {
     
