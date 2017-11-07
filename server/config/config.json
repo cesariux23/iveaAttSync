@@ -6,6 +6,7 @@
     "host": "localhost",
     "dialect": "mysql",
     "timezone": "America/Mexico_City",
+    "socketPath": "/var/run/mysqld/mysqld.sock",
     "pool": {
       "max": 5,
       "min": 0,
