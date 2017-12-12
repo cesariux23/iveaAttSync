@@ -13,15 +13,17 @@
             b-form-input(v-model="search"
               type="text"
               placeholder="Nombre, userid o adscripción")
-      .card-body
-        b-list-group
-          b-list-group-item(v-for="emp in filteredEmpleados" :key="emp.userid" v-on:click="selectEmpleado(emp)")
+      .card-body#list-container
+        div(v-if="search")
+          .alert.alert-warning(v-if="filteredEmpleados.length === 0") Sin resultados.
+          .alert.alert-info(v-else) Mostrando {{filteredEmpleados.length}} resultado(s).
+        b-list-group#list
+          b-list-group-item(v-for="emp in filteredEmpleados" :key="emp.userid" v-on:click="selectEmpleado(emp)" href="#")
             span.userid {{ emp.userid }}
             span
               span {{emp.nombre}}
               br
               span.ads.text-secondary.elipsis {{emp.adscripcion}}
-        div(v-if="filteredEmpleados.length === 0") Sin resultados
 </template>
 <script>
   import HTTP from '../../http'
@@ -59,3 +61,16 @@
     }
   }
 </script>
+<style lang="less" scoped>
+  @header:120px;
+  .card-header{
+    height: @header;
+  }
+  #list-container{
+    overflow:auto;
+    min-height: @header;
+  }
+  #list{
+    width: 100%;
+  }
+</style>

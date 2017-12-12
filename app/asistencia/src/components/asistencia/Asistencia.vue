@@ -1,11 +1,10 @@
 <template lang='pug'>
-  .container-fluid
+  div.event-content
     .row
-      .col-sm-3.fixed
+      .col-lg-3.no-padding-right
         empleado-list( v-on:selectedEmp="updateSelected")
-      .col-sm-9.col-offset-sm-3
-        .eventos
-          
+      .col-lg-9
+        .eventos  
           div(v-if="empleado")
             .empleado
               div
@@ -18,6 +17,7 @@
               div
                 b Adscripción
                 p {{ empleado.adscripcion }}
+              br  
               div
                 b Entrada
                 p  {{ empleado.entrada }}
@@ -81,3 +81,16 @@
     }
   }
 </script>
+<style lang="less" scoped>
+.event-content{
+  height: 94vh;
+  .row{
+    min-height: 100%;
+
+    .col-eventos{
+      overflow-y: auto;
+    }
+  }
+
+}
+</style>

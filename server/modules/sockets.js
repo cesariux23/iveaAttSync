@@ -86,14 +86,31 @@ module.exports = (czs) =>{
                                 .then(eventos => {
                                     let entrada = eventos[0]
                                     let salida = eventos.pop()
-                                    
-                                    const updatedAtt = {}// id: att.id }
-                                    updatedAtt['entrada'] = entrada.id
-                                    if(entrada !== salida){
-                                        updatedAtt['salida'] = salida.id
+                                    if (entrada !== null) {
+                                        const updatedAtt = {}// id: att.id }
+                                        updatedAtt['entrada'] = entrada.id
+
+                                        // se determina la salida
+                                        if(entrada !== salida){
+                                            // siempre y cuando los eventos tengan una diferencia significativa
+                                            // (minimo 5 minutos)
+                                            const diferencia = calculaDiferencia(entrada, salida)
+                                            if (diferencia.totalMinutos >= 5) {
+                                                updatedAtt['salida'] = salida.id   
+                                                // si el total de horas es >=6.75 y menor a 7 , es una asistencia, pero ya no tiene puntualidad
+                                                if (diferencia.totalHoras >= 6.75 && diferencia.totalHoras < 7) {
+                                                    updatedAtt['status'] = 'ASISTENCIA'
+                                                }
+                                                // si es mayor a 6.5 es un retardo
+
+                                                // si es menor, es retardo mayor
+                                                if (diferencia.totalHoras < 6.5) {
+                                                    updatedAtt['status'] = 'RETARDO MAYOR'
+                                                }
+                                            }
+                                        }
+                                        models.Asistencia.update(updatedAtt, { where: {id: att.id} })
                                     }
-                                    //return updatedAtt
-                                    models.Asistencia.update(updatedAtt, { where: {id: att.id} })
                                 })
                             })
                         })
@@ -103,6 +120,15 @@ module.exports = (czs) =>{
                     })
                 })
             })
+
+            function calculaDiferencia(fecha1, fecha2) {
+                const diferencia = {}
+                diferencia.horas = fecha2.hora - fecha1.hora
+                diferencia.minutos = fecha2.minuto - fecha1.minuto
+                diferencia.totalMinutos = (diferencia.horas * 60) + diferencia.minutos
+                diferencia.totalHoras = diferencia.totalMinutos / 60
+                return diferencia
+            }
 
             /*
             if(processAtt(data.eventos)){

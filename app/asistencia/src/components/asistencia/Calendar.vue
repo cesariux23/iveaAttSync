@@ -17,7 +17,8 @@
 
     .row.days
       .calendar-day(v-for="d in dias" v-bind:class="dayClass(d)" @click="openDetail(d)")
-        span.day-label.text-secondary {{d}}
+        .day-label
+          span {{d}}
         dia(v-bind:eventos="asistencia | attEvent(d)")
 
     b-modal(ref="attModal"
@@ -42,11 +43,11 @@
               .row
                 .col-6
                   b Entrada: 
-                  span(v-if="selectedDay.entradaEvt") {{selectedDay.entradaEvt.hora}}:{{selectedDay.entradaEvt.minuto}} hrs.
+                  span(v-if="selectedDay.entradaEvt") {{selectedDay.entradaEvt.hora | zeroFill}}:{{selectedDay.entradaEvt.minuto | zeroFill}} hrs.
                   span(v-else) No definido.
                 .col-6 
                   b Salida: 
-                  span(v-if="selectedDay.salidaEvt") {{selectedDay.salidaEvt.hora}}:{{selectedDay.salidaEvt.minuto}} hrs.
+                  span(v-if="selectedDay.salidaEvt") {{selectedDay.salidaEvt.hora | zeroFill}}:{{selectedDay.salidaEvt.minuto | zeroFill}} hrs.
                   span(v-else) No definido.
 </template>
 <script>
@@ -65,7 +66,7 @@
         asistencia: [],
         statuses: [
           { text: 'Seleccione uno', value: null },
-          'PUNTUALIDAD', 'ASISTENCIA', 'RETARDO', 'INASISTENCIA', 'LICENCIA', 'NO_LABORAL'
+          'PUNTUALIDAD', 'ASISTENCIA', 'RETARDO RECUPERABLE', 'RETARDO MAYOR', 'COMISIÓN', 'OMISIÓN DE ENTRADA', 'OMISIÓN DE SALIDA', 'INASISTENCIA', 'LICENCIA MEDICA', 'NO LABORAL', 'PERIODO VACACIONAL', 'PENDIENTE'
         ],
         selectedStatus: null,
         observaciones: null,
@@ -80,6 +81,13 @@
         return eventos.filter(function (e) {
           return e.dia === parseInt(d)
         })
+      },
+      zeroFill: (numero) => {
+        const width = 2 - numero.toString().length
+        if (width > 0) {
+          return new Array(width + (/\./.test(numero) ? 2 : 1)).join('0') + numero
+        }
+        return numero + '' // siempre devuelve tipo cadena
       }
     },
     computed: {
@@ -175,7 +183,7 @@
     }
   }
 </script>
-<style scoped lang="less">
+<style lang="less">
 ul {list-style-type: none;}
 
 .calendar{
@@ -226,22 +234,46 @@ ul {list-style-type: none;}
 .days {
     background: #eee;
     margin: 0;
-    padding-bottom: 10px;
+    padding-bottom: 1px;
+}
+
+.calendar-day.data:hover{
+  .day-label{
+    background-color: #d9d9d9;
+  }
+  .event-container{
+    visibility: visible;
+  }
 }
 
 .calendar-day{
   width: 14.28571428571429%;
   border: 1px solid #eee;
-  height: 120px;
-  padding: 5px;
+  height: 110px;
+  padding: 5px; 
 }
 .calendar-day.data{
-    background-color: white;
-    cursor: pointer;
+  background-color: white;
+  color: #4d4d4d;
+  text-align: center;
+  cursor: pointer; 
+  .day-label{
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #868e96;
+    border-radius: 50%;
+    span{
+      display: flex;
+    }
+  }
 }
+
 .calendar-day.empty >*{
   display: none;
-  
 }
 
 .days li {
@@ -257,21 +289,13 @@ ul {list-style-type: none;}
   background-color: white;
   cursor: pointer;
 }
+
 .days li.empty{
   height: 0;
 }
 .days li.empty >*{
   display: none;
   
-}
-.days li > span.day-label{
-    text-align: center;
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: left;
-    justify-content: center;
-    position: absolute;
 }
 
 .days li .active {
