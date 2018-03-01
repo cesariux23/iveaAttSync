@@ -3,13 +3,10 @@
 @import "../../node_modules/font-awesome/less/variables";
 @fa-font-path:"~font-awesome/fonts";
 
-@full: 100%-3.5em;
+@full: 100% - 3.5em;
 
-html {
-  height: @full;
-}
-body {
-  min-height: @full;
+html, body, body > div#app {
+  min-height: 100vh;
 }
 
 .bg-info {

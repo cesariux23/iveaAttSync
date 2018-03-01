@@ -1,9 +1,9 @@
 <template lang='pug'>
-  div.event-content
+  div.event-content.container-fluid
     .row
-      .col-lg-3.no-padding-right
+      .col-md-3.empleados
         empleado-list( v-on:selectedEmp="updateSelected")
-      .col-lg-9
+      .col-md-9.detalles
         .eventos  
           div(v-if="empleado")
             .empleado
@@ -75,7 +75,7 @@
         empleado: null,
         info: {
           mesActual: moment().month() + 1,
-          anio: 2017
+          anio: moment().year()
         }
       }
     }
@@ -83,14 +83,13 @@
 </script>
 <style lang="less" scoped>
 .event-content{
-  height: 94vh;
-  .row{
-    min-height: 100%;
-
-    .col-eventos{
-      overflow-y: auto;
-    }
+  overflow-x: hidden;
+  .empleados{
+    position: fixed;
+    overflow-y: hidden;
   }
-
+  .detalles{
+    margin-left: auto;
+  }
 }
 </style>

@@ -10,7 +10,7 @@
           li.nav-item
             router-link.nav-link(to="/dispositivos" active-class="active") Dispositivos en línea
     
-    .container-fluid.main
+    .main
       router-view
 </template>
 
@@ -22,6 +22,6 @@ export default {
 
 <style>
 .main {
-  margin-top: 3.5em;
+  padding-top: 3.5em;
 }
 </style>

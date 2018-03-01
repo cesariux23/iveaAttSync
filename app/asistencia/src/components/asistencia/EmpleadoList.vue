@@ -1,30 +1,31 @@
 <template lang='pug'>
-  .left
-    .card#empladosList  
-      .card-header
-        router-link.fav(to="/empleados/registro" title='Registrar')
-            i.fa.fa-plus
-        H4 Empleados
-          
-        .form-group
-          .input-group
-            span.input-group-addon 
-              i.fa.fa-search
-            b-form-input(v-model="search"
-              type="text"
-              placeholder="Nombre, userid o adscripción")
-      .card-body#list-container
+  .card
+    .card-header
+      h4 Empleados
+      .form-group
+        .input-group
+          span.input-group-addon 
+            i.fa.fa-search
+          b-form-input(v-model="search"
+          type="text"
+          placeholder="Nombre, userid o adscripción")
+    .card-body
+      .empleados-list
         div(v-if="search")
           .alert.alert-warning(v-if="filteredEmpleados.length === 0") Sin resultados.
           .alert.alert-info(v-else) Mostrando {{filteredEmpleados.length}} resultado(s).
         b-list-group#list
           b-list-group-item(v-for="emp in filteredEmpleados" :key="emp.userid" v-on:click="selectEmpleado(emp)" href="#")
             span.userid {{ emp.userid }}
-            span
-              span {{emp.nombre}}
-              br
-              span.ads.text-secondary.elipsis {{emp.adscripcion}}
-</template>
+              span
+                span {{emp.nombre}}
+                br
+                span.ads.text-secondary.elipsis {{emp.adscripcion}}
+    .card-footer
+      router-link.btn.btn-success(to="/empleados/registro" title='Registrar')
+        span 
+        i.fa.fa-plus
+  </template>
 <script>
   import HTTP from '../../http'
   export default {
@@ -62,15 +63,19 @@
   }
 </script>
 <style lang="less" scoped>
-  @header:120px;
-  .card-header{
-    height: @header;
+  div{
+    border-radius: 0;
   }
-  #list-container{
-    overflow:auto;
-    min-height: @header;
-  }
-  #list{
-    width: 100%;
+  .card {
+    display: flex;
+    flex-direction: column;
+    >.card-header {
+      max-height: 115px;
+    }
+    >.card-body{
+      height: calc(~"100vh - 237px");
+      overflow: auto;
+      padding: 0;
+    }
   }
 </style>

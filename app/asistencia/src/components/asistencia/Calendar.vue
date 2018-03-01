@@ -1,17 +1,17 @@
 <template lang ="pug">
   .calendar
-    .month
-      ul
-        li.prev
+    .month.container-fluid
+      .row
+        .col-sm-4.text-left
           button.btn.btn-light(type="button" @click="anterior")
             i.fa.fa-chevron-left.fa-2x
-        li.next
-          button.btn.btn-light(type="button" @click="siguiente")
-            i.fa.fa-chevron-right.fa-2x
-        li
+        .col-sm-4.title
           b {{meses[info.mesActual-1]}}
           br
           span {{info.anio}}
+        .col-sm-4.text-right
+          button.btn.btn-light(type="button" @click="siguiente")
+            i.fa.fa-chevron-right.fa-2x
     ul.weekdays
       li(v-for="wd in weekdays") {{wd}}
 
@@ -66,7 +66,7 @@
         asistencia: [],
         statuses: [
           { text: 'Seleccione uno', value: null },
-          'PUNTUALIDAD', 'ASISTENCIA', 'RETARDO RECUPERABLE', 'RETARDO MAYOR', 'COMISIÓN', 'OMISIÓN DE ENTRADA', 'OMISIÓN DE SALIDA', 'INASISTENCIA', 'LICENCIA MEDICA', 'NO LABORAL', 'PERIODO VACACIONAL', 'PENDIENTE'
+          'PUNTUALIDAD', 'ASISTENCIA', 'RETARDO RECUPERABLE', 'RETARDO MAYOR', 'COMISIÓN', 'PERMISO ECONÓMICO', 'OMISIÓN DE ENTRADA', 'OMISIÓN DE SALIDA', 'INASISTENCIA', 'LICENCIA MEDICA', 'NO LABORAL', 'PERIODO VACACIONAL', 'VACACIONES EXTRA', 'PENDIENTE'
         ],
         selectedStatus: null,
         observaciones: null,
@@ -137,7 +137,7 @@
       openDetail: function (dia) {
         if (dia) {
           this.dia = dia
-          this.modalTitle = 'Asistencia del día ' + dia + ' de ' + this.meses[this.info.mesActual - 1]
+          this.modalTitle = 'Asistencia del día ' + dia + ' de ' + this.meses[this.info.mesActual - 1] + ' de ' + this.info.anio
           this.selectedStatus = null
           this.observaciones = null
           HTTP.get('/asistencia', {
@@ -195,29 +195,14 @@ ul {list-style-type: none;}
     width: 100%;
     background: #1abc9c;
     text-align: center;
+    .title {
+      color:#fff;
+      text-transform: uppercase;
+      line-height: 18px;
+    }
 }
 
-.month ul {
-    margin: 0;
-    padding: 0;
-}
 
-.month ul li {
-    color: white;
-    font-size: 20px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-}
-
-.month .prev {
-    float: left;
-    padding-top: 10px;
-}
-
-.month .next {
-    float: right;
-    padding-top: 10px;
-}
 .weekdays {
     margin: 0;
     padding: 10px 0;
@@ -226,7 +211,7 @@ ul {list-style-type: none;}
 
 .weekdays li {
     display: inline-block;
-    width: 13.6%;
+    width: 14.28571428571429%;
     color: #666;
     text-align: center;
 }
@@ -302,19 +287,5 @@ ul {list-style-type: none;}
     padding: 5px;
     background: #1abc9c;
     color: white !important
-}
-
-/* Add media queries for smaller screens */
-@media screen and (max-width:1120px) {
-    .weekdays li, .days li {width: 13.1%;}
-}
-
-@media screen and (max-width: 820px) {
-    .weekdays li, .days li {width: 12.5%;}
-    .days li .active {padding: 2px;}
-}
-
-@media screen and (max-width: 690px) {
-    .weekdays li, .days li {width: 12.2%;}
 }
 </style>
