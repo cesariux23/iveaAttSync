@@ -4,27 +4,30 @@
       h4 Empleados
       .form-group
         .input-group
-          span.input-group-addon 
-            i.fa.fa-search
           b-form-input(v-model="search"
           type="text"
-          placeholder="Nombre, userid o adscripción")
+          placeholder="Buscar ...")
+          span.input-group-addon(v-if="search")
+            i.fa.fa-times
     .card-body
       .empleados-list
         div(v-if="search")
           .alert.alert-warning(v-if="filteredEmpleados.length === 0") Sin resultados.
           .alert.alert-info(v-else) Mostrando {{filteredEmpleados.length}} resultado(s).
-        b-list-group#list
+        b-list-group
           b-list-group-item(v-for="emp in filteredEmpleados" :key="emp.userid" v-on:click="selectEmpleado(emp)" href="#")
-            span.userid {{ emp.userid }}
-              span
-                span {{emp.nombre}}
-                br
-                span.ads.text-secondary.elipsis {{emp.adscripcion}}
+            h5
+              b {{ emp.userid }}
+            p {{emp.nombre}}
+            p.text-secondary {{emp.adscripcion}}
     .card-footer
-      router-link.btn.btn-success(to="/empleados/registro" title='Registrar')
-        span 
-        i.fa.fa-plus
+      .row
+        .col-md-6.text-left
+          button.btn.btn-light(title= "Empleado anterior")
+            i.fa.fa-chevron-left
+        .col-md-6.text-right
+          button.btn.btn-light(title= "Siguente empleado")
+            i.fa.fa-chevron-right
   </template>
 <script>
   import HTTP from '../../http'
@@ -76,6 +79,15 @@
       height: calc(~"100vh - 237px");
       overflow: auto;
       padding: 0;
+
+      .list-group-item{
+        
+        line-height: 18px;
+        padding: 10px;
+        p{
+          margin: 0;
+        }
+      }
     }
   }
 </style>
