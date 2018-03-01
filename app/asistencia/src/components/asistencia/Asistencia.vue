@@ -5,32 +5,35 @@
         empleado-list( v-on:selectedEmp="updateSelected")
       .col-md-9.detalles
         .eventos  
-          div(v-if="empleado")
-            .empleado
-              div
+          .container-fluid(v-if="empleado")
+            .float-right
+              router-link.btn.btn-outline-secondary(:to="{ name: 'edicionEmpleado', params: { id: empleado.userid }}")
+                  i.fa.fa-pencil
+                  |  Editar empleado
+            h3 Detalle de la asistencia
+            hr
+            .row
+              .col-md-4.col-lg-1
                 b Userid
                 p {{empleado.userid}}
-                
-              div
+              .col
                 b Nombre
                 p {{ empleado.nombre }}
-              div
+              .col
                 b Adscripción
                 p {{ empleado.adscripcion }}
-              br  
-              div
+              .col-md-3.col-lg-1
                 b Entrada
                 p  {{ empleado.entrada }}
-              div
+              .col-md-3.col-lg-1
                 b Salida
                 p  {{ empleado.salida }}
-              div
+              .col-md-3.col-lg-1
                 b Tolerancia
                 p 15 mins.
-              div
-                router-link.btn.btn-outline-info(:to="{ name: 'edicionEmpleado', params: { id: empleado.userid }}" title='Registrar')
-                  i.fa.fa-pencil
+            hr
             calendar(v-bind:info="info" v-bind:userid="empleado.userid" v-on:anterior="mesAnterior" v-on:siguiente="mesSiguiente")
+
           .center.well.empty-data(v-else)
             div
               p
@@ -84,6 +87,7 @@
 <style lang="less" scoped>
 .event-content{
   overflow-x: hidden;
+  padding-bottom: 10px;
   .empleados{
     position: fixed;
     overflow-y: hidden;
