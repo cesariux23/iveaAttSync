@@ -17,7 +17,7 @@
 </template>
 <script>
 import io from 'socket.io-client'
-const socket = io('http://192.168.30.248:3000/czs')
+const socket = io('/czs')
 
 export default {
 

@@ -2,7 +2,7 @@
   .row
     .col-xl-9
       .calendar
-        .month.container-fluid
+        .month
           .row
             .col-sm-4.text-left
               button.btn.btn-light(type="button" @click="anterior")
@@ -57,7 +57,7 @@
           .float-right
             button.btn.btn-sm.btn-outline-primary(title='Recalcular asistencia')
               i.fa.fa-refresh
-          h4 Resumen del mes
+          h5.card-title Resumen del mes
           
         .card-body
           .row
@@ -240,7 +240,7 @@ ul {list-style-type: none;}
 
 
 .weekdays {
-    margin: 0;
+    margin: 0 !important;
     padding: 10px 0;
     background-color: #ddd;
 }
