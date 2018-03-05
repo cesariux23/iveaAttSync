@@ -69,7 +69,6 @@
               
 </template>
 <script>
-  import HTTP from '../../http'
   import dia from './Dia'
   import moment from 'moment'
   moment.locale('es')
@@ -149,7 +148,7 @@
         this.getEvents()
       },
       getEvents: function () {
-        HTTP.get('/asistencia', {
+        this.$http.get('/asistencia', {
           params: {
             userid: this.userid,
             anio: this.info.anio,
@@ -174,7 +173,7 @@
           this.modalTitle = 'Asistencia del día ' + dia + ' de ' + this.meses[this.info.mesActual - 1] + ' de ' + this.info.anio
           this.selectedStatus = null
           this.observaciones = null
-          HTTP.get('/asistencia', {
+          this.$http.get('/asistencia', {
             params: {
               userid: this.userid,
               anio: this.info.anio,
@@ -202,7 +201,7 @@
           status: this.selectedStatus
         }
         const method = this.selectedDay ? 'patch' : 'post'
-        HTTP({
+        this.$http({
           method,
           url: url,
           data

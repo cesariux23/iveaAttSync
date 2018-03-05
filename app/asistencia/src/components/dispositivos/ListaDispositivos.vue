@@ -16,9 +16,6 @@
           td {{cz.mensaje}}
 </template>
 <script>
-import io from 'socket.io-client'
-const socket = io('/czs')
-
 export default {
 
   name: 'listaDispositivos',
@@ -30,7 +27,7 @@ export default {
   },
   methods: {
     sync (id) {
-      socket.emit('reqSync', id)
+      this.$socket.emit('reqSync', id)
     }
   },
   watch: {
@@ -42,22 +39,22 @@ export default {
     }
   },
   created () {
-    socket.close()
-    socket.open()
+    this.$socket.close()
+    this.$socket.open()
     const _this = this
-    socket.on('connect', function () {
-      socket.emit('reqZonas')
+    this.$socket.on('connect', function () {
+      _this.$socket.emit('reqZonas')
     })
-    socket.on('menssages', function () {
+    this.$socket.on('menssages', function () {
       console.log('mensaje')
     })
-    socket.on('reconnect', function () {
-      socket.emit('reqZonas')
+    this.$socket.on('reconnect', function () {
+      _this.$socket.emit('reqZonas')
     })
-    socket.on('online', function (data) {
+    this.$socket.on('online', function (data) {
       _this.ubicaciones = data.coordinaciones
     })
-    socket.on('logSync', function (data) {
+    this.$socket.on('logSync', function (data) {
       if (data.hasOwnProperty('zona')) {
         _this.ubicaciones[data.zona].mensaje = data.mensaje
         _this.ubicaciones[data.zona].online = data.online

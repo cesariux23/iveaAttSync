@@ -30,7 +30,6 @@
             i.fa.fa-chevron-right
   </template>
 <script>
-  import HTTP from '../../http'
   export default {
     name: 'empleado-list',
     data () {
@@ -57,7 +56,7 @@
     },
     created () {
       console.log('Created')
-      HTTP.get('/empleados')
+      this.$http.get('/empleados')
       .then((res) => {
         console.log(res)
         this.empleados = res.data.data
