@@ -6,7 +6,6 @@
 </template>
 <script>
   import EmpleadoForm from './EmpleadoForm'
-  import HTTP from '../../http'
   export default {
     name: 'Registro',
     props: ['id'],
@@ -38,7 +37,7 @@
           salida_comer: empleado.salida_comer
         }
         const method = this.isPatch ? 'patch' : 'post'
-        HTTP({
+        this.$http({
           method,
           url: url,
           data
@@ -50,7 +49,7 @@
     },
     created: function () {
       if (this.id) {
-        HTTP.get(`/empleados/${this.id}`)
+        this.$http.get(`/empleados/${this.id}`)
         .then((res) => {
           console.log(res)
           if (res.data) {
