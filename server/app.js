@@ -11,6 +11,8 @@ var asistencia = require('./routes/asistencia');
 var empleados = require('./routes/empleados');
 var lessMiddleware = require('less-middleware');
 
+//env config
+require('dotenv').config();
 //timezone para mexico
 process.env.TZ = 'UTC-6';
 
@@ -30,7 +32,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname,'node_modules')));
 // Se agrega Less
 app.use(lessMiddleware(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'app/asistencia/dist')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);

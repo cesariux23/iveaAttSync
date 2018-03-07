@@ -20,8 +20,9 @@ Vue.use(BootstrapVue)
 /** Global config **/
 const baseUrl = process.env.BASE_URL
 const apiUrl = baseUrl + '/api'
-const channel = '/czs'
-const socketUrl = baseUrl + channel
+const channel = process.env.CHANNEL
+const socketUrl = baseUrl + '/' + channel
+console.log(socketUrl)
 
 // Axios config
 Vue.prototype.$http = axios.create({
