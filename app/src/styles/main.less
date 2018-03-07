@@ -1,0 +1,138 @@
+
+@import "../../node_modules/font-awesome/less/font-awesome";
+@import "../../node_modules/font-awesome/less/variables";
+@fa-font-path:"~font-awesome/fonts";
+
+@full: 100% - 3.5em;
+
+html, body, body > div#app {
+  min-height: 100vh;
+}
+
+.bg-info {
+  background-color: #2196f3 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.btn-form-group {
+  .btn {
+    margin-right: 10px; 
+  }
+}
+.elipsis {
+  text-overflow: ellipsis;
+}
+.container{
+  padding-top: 10px;
+}
+
+.calendar-day.data:hover{
+  .row{
+    visibility: visible;
+  }
+}
+
+.container-fluid{
+  padding-left: 0px;
+  min-height: 100%;
+}
+
+.no-padding-right{
+  padding-right: 0;
+}
+
+div.left{
+  height:~"calc(100vh - 3.5em)";
+}
+
+@media screen and (max-width: 820px) {
+  div.left{
+    height:300px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
+div#empladosList{
+  
+  border-radius: 0;
+
+  .card-header{
+    .form-group{
+      min-width: 100%;
+      margin-top: 25px;
+    }
+  }
+  .card-body{
+    height: 100%;
+    padding: 0;
+  }
+
+  height: 100%;
+
+  .list-group-item{
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px rgba(0, 0, 0, 0.125) solid;
+    margin-bottom: 1px;
+
+    span{
+      display: inline-block;
+    }
+
+    .userid{
+      width: 40px;
+      vertical-align: top;
+      font-weight: 500;
+      font-size: 20px;
+      margin-right: 5px;
+      text-align: center;
+    }
+    .ads{
+      font-size: 12px;
+    }
+    
+  }
+}
+div.eventos{
+  padding: 10px 30px 10px 30px;
+  min-height: @full;;
+  .empleado{
+    border-bottom: 1px solid #dddddd;
+    margin-bottom: 20px;
+    list-style-type: none;
+    div{
+      display: inline-block;
+      padding-right: 40px;
+    }
+  }
+  .empty-data {
+    text-align: center;
+    color: #A9A9A9;
+    margin: 100px;
+    p{
+      font-size: 25px;
+    }
+  }
+  .mes{
+    display: flex;
+    justify-content: space-between;
+    .nombre-mes{
+      padding: 0 60px;
+    }
+  }
+}
+
+a.fav{
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #5bc0de;
+  border-color: #46b8da;
+  border-radius: 50%;
+  position: absolute;
+  top: 15px;
+  font-size: 16px;
+  right: 10px;
+  text-decoration: none !important;
+  color: #ffffff !important;
+}
