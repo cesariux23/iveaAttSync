@@ -31,7 +31,7 @@ app.use(cookieParser());
 // Se hace publico sockets.io
 app.use(express.static(path.join(__dirname,'node_modules')));
 // Se agrega Less
-app.use(lessMiddleware(path.join(__dirname, 'public')));
+//app.use(lessMiddleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
