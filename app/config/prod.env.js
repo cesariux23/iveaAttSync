@@ -1,5 +1,5 @@
 module.exports = {
   NODE_ENV: '"production"',
   BASE_URL: '""',
-  CHANNEL: '"bac"'
+  CHANNEL: '"czs"'
 }
