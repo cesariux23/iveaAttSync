@@ -42,21 +42,21 @@
           url: url,
           data
         })
-        .then((res) => {
-          this.$router.push('/asistencia')
-        })
+          .then((res) => {
+            this.$router.push('/asistencia')
+          })
       }
     },
     created: function () {
       if (this.id) {
         this.$http.get(`/empleados/${this.id}`)
-        .then((res) => {
-          console.log(res)
-          if (res.data) {
-            this.empleado = res.data
-            this.isPatch = true
-          }
-        })
+          .then((res) => {
+            console.log(res)
+            if (res.data) {
+              this.empleado = res.data
+              this.isPatch = true
+            }
+          })
       }
     }
   }

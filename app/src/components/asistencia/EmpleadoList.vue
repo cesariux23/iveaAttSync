@@ -1,7 +1,6 @@
 <template lang='pug'>
   .card
     .card-header
-      h4 Empleados
       .form-group
         .input-group
           b-form-input(v-model="search"
@@ -75,7 +74,7 @@
       max-height: 115px;
     }
     >.card-body{
-      height: calc(~"100vh - 237px");
+      height: calc(~"100vh - 200px");
       overflow: auto;
       padding: 0;
 

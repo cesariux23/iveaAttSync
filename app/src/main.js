@@ -10,6 +10,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import vueMoment from 'vue-moment'
 import axios from 'axios'
 import io from 'socket.io-client'
+import store from './store'
 
 Vue.use(vueMoment)
 
@@ -38,6 +39,7 @@ Vue.prototype.$socket = io(socketUrl)
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })
