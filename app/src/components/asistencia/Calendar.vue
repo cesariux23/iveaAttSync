@@ -1,96 +1,157 @@
 <template lang='pug'>
-  .row
-    .col-xl-9
-      .calendar
-        .month
-          .row
-            .col-sm-4.text-left
-              button.btn.btn-light(type="button" @click="anterior")
-                i.fa.fa-chevron-left.fa-2x
-            .col-sm-4.title
-              b {{meses[info.mesActual-1]}}
-              br
-              span {{info.anio}}
-            .col-sm-4.text-right
-              button.btn.btn-light(type="button" @click="siguiente")
-                i.fa.fa-chevron-right.fa-2x
-        ul.weekdays
-          li(v-for="wd in weekdays") {{wd}}
+  .calendar-container
+    h5 Eventos
+    .row
+      .col
+        .calendar
+          ul.weekdays
+            li.text-uppercase(v-for="wd in weekdays") {{wd}}
 
-        .row.days
-          .calendar-day(v-for="d in dias" v-bind:class="dayClass(d)" @click="openDetail(d)")
-            .day-label
-              span {{d}}
-            dia(v-bind:eventos="asistencia | attEvent(d)")
+          .row.days
+            .calendar-day(v-for="d in dias" v-bind:class="dayClass(d)"  @click="handleDayClick(d)")
+              .day-label.position-absolute(:class="{selected: selection.indexOf(d) >= 0 }")
+                span {{d}}
+              day(v-bind:eventos="asistencia | attEvent(d)")
 
-        b-modal(ref="attModal"
-          :title="modalTitle"
-          closeTitle="Cerrar"
-          okTitle="Actualizar asistencia"
-          @ok="updateAtt"
-        )
-            .d-block
-              b-form-group(label="Marcar la asistencia de este día como" label-for="status")
-                b-form-select(id="status" :options="statuses" required v-model="selectedStatus")
-              b-form-textarea(id="observaciones"
-                        v-model="observaciones"
-                        placeholder="Observaciones"
-                        :rows="3"
-                        :max-rows="6")
-              hr
-              .alert.alert-secondary(v-if= "!selectedDay") Sin eventos registrados
+          b-modal(ref="attModal"
+            :title="modalTitle"
+            closeTitle="Cerrar"
+            okTitle="Actualizar asistencia"
+            cancelTitle="Cancelar"
+            @ok="updateAtt"
+          )
+              .d-block
+                b-form-group(label="Marcar la asistencia de este día como" label-for="status")
+                  b-form-select(id="status" :options="statuses" required v-model="selectedStatus")
+                b-form-textarea(id="observaciones"
+                          v-model="observaciones"
+                          placeholder="Observaciones"
+                          :rows="3"
+                          :max-rows="6")
+                hr
+                .alert.alert-secondary(v-if= "!selectedDay") Sin eventos registrados
+                div(v-else)
+                  p Eventos Registrados:
+                  .alert.alert-info
+                    .row
+                      .col
+                        b Entrada: 
+                        span(v-if="selectedDay.entradaEvt") {{selectedDay.entradaEvt.hora | zeroFill}}:{{selectedDay.entradaEvt.minuto | zeroFill}} hrs.
+                        span(v-else)
+                          | No definido.
+                          i.fa.fa-exclamation-circle
+                      .col
+                        b Salida: 
+                        span(v-if="selectedDay.salidaEvt") {{selectedDay.salidaEvt.hora | zeroFill}}:{{selectedDay.salidaEvt.minuto | zeroFill}} hrs.
+                        span(v-else)
+                          b No definido.
+                          i.fa.fa-exclamation-circle
+      .col-5
+        div(v-if="selection.length > 0")
+          .card
+            header.card-header
+              div(v-if="selection.length == 1")
+                b-button.float-right(variant="light" @click="selection = []")
+                  i.fa.fa-times
+                  |  Cerrar
+                h4
+                  i.fa.fa-calendar-check-o
+                  b  {{selection[0]}}
+                  |  de {{months[selectedDate.month - 1]}}
               div(v-else)
-                p Eventos Registrados:
-                .alert.alert-info
-                  .row
-                    .col
-                      b Entrada: 
-                      span(v-if="selectedDay.entradaEvt") {{selectedDay.entradaEvt.hora | zeroFill}}:{{selectedDay.entradaEvt.minuto | zeroFill}} hrs.
-                      span(v-else) No definido.
-                    .col
-                      b Salida: 
-                      span(v-if="selectedDay.salidaEvt") {{selectedDay.salidaEvt.hora | zeroFill}}:{{selectedDay.salidaEvt.minuto | zeroFill}} hrs.
-                      span(v-else) No definido.
-    .col-xl-3
-      .card
-        .card-header
-          .float-right
-            button.btn.btn-sm.btn-outline-primary(title='Recalcular asistencia')
-              i.fa.fa-refresh
-          h5.card-title Resumen del mes
-          
-        .card-body
-          .row
-            .col-xl-12.col
-              p(v-for='(count, status) in resumen')
-                b {{status}}
-                | : 
-                span {{count}}
-              
+                b-button.float-right(variant="light" @click="selection = []")
+                  i.fa.fa-times
+                  |  Limpiar
+                h4
+                  i.fa.fa-calendar-plus-o
+                  b  {{selection.length}}
+                  |  días
+            div(v-if="selection.length > 1")
+              .alert.alert-warning
+                | Días seleccionados:
+                b  {{selection.join(', ')}}      
+            .card-body
+              div(v-if="isLoadingDayDetail")
+                i.fa.fa-circle-o-notch.fa-fw.fa-2x.fa-spin.text-muted
+              div(v-else)
+                div(v-if="selection.length === 1")
+                  div(v-if="selectedDay")
+                    .alert.alert-info
+                      h5 Eventos asociados
+                      .row
+                        .col
+                          b Entrada: 
+                          span(v-if="selectedDay.entradaEvt") {{selectedDay.entradaEvt.hora | zeroFill}}:{{selectedDay.entradaEvt.minuto | zeroFill}} hrs.
+                          span(v-else)
+                            i.fa.fa-exclamation-circle
+                            |   No definido.
+                        .col
+                          b Salida: 
+                          span(v-if="selectedDay.salidaEvt") {{selectedDay.salidaEvt.hora | zeroFill}}:{{selectedDay.salidaEvt.minuto | zeroFill}} hrs.
+                          span(v-else)
+                            i.fa.fa-exclamation-circle
+                            |   No definido.
+                  .alert.alert-secondary(v-else) Sin eventos registrados
+                      
+                b-form
+                  b-form-group
+                    label Marcar la asistencia como
+                    b-form-select(id="status" :options="statuses" required v-model="selectedDay.status")
+                  b-form-group
+                    label Observaciones
+                    b-form-textarea(
+                      id="observaciones"
+                      v-model="selectedDay.observaciones"
+                      placeholder="Observaciones"
+                      :rows="3"
+                      :max-rows="6")
+                  b-form-group
+                    b-button(variant="success" @click="updateAtt")
+                      i.fa.fa-check
+                      |  Guardar
+
+        div(v-else)
+          .card
+            .card-header
+              h4
+                i.fa.fa-pie-chart
+                |  Resumen
+            table.table.table-sm
+              thead
+                tr
+                  th Status
+                  th Conteo
+              tbody
+                tr(v-for ="status in statuses" v-if="resumen[status] > 0")
+                  td
+                    AttIcon(:status="status")
+                    |  {{AttStatuses[status].name}}
+                  td
+                    | {{resumen[status]}}
+                  
 </template>
 <script>
-  import dia from './Dia'
+  import Day from './day'
   import moment from 'moment'
+  import AttIcon from '../common/AttIcon'
   moment.locale('es')
   export default {
     name: 'Calendar',
-    components: {dia},
-    props: ['info', 'userid'],
+    components: {Day, AttIcon},
+    props: ['selectedDate', 'userid'],
     data () {
       return {
         eventos: [],
-        meses: moment.months(),
         asistencia: [],
-        statuses: [
-          { text: 'Seleccione uno', value: null },
-          'PUNTUALIDAD', 'ASISTENCIA', 'RETARDO RECUPERABLE', 'RETARDO MAYOR', 'COMISIÓN', 'PERMISO ECONÓMICO', 'OMISIÓN DE ENTRADA', 'OMISIÓN DE SALIDA', 'INASISTENCIA', 'LICENCIA MEDICA', 'NO LABORAL', 'PERIODO VACACIONAL', 'VACACIONES EXTRA', 'PENDIENTE'
-        ],
         selectedStatus: null,
+        selection: [],
         observaciones: null,
         weekdays: moment.weekdaysMin(),
         selectedDay: {},
         modalTitle: '',
-        dia: null
+        dayToUpdate: false,
+        patchDay: false,
+        isLoadingDayDetail: false
       }
     },
     filters: {
@@ -110,8 +171,8 @@
     computed: {
       // dias del mes para mostrar en el calendario
       dias: function () {
-        const inicio = moment({ y: this.info.anio, M: this.info.mesActual - 1, d: 1 })
-        let fin = moment({ y: this.info.anio, M: this.info.mesActual - 1, d: 1 }).add(1, 'month').subtract(1, 'day')
+        const inicio = moment({ y: this.selectedDate.year, M: this.selectedDate.month - 1, d: 1 })
+        let fin = moment({ y: this.selectedDate.year, M: this.selectedDate.month - 1, d: 1 }).add(1, 'month').subtract(1, 'day')
 
         const off = inicio.day() >= 1 ? Array.from(new Array(inicio.day()), (x, i) => '') : []
         return off.concat(Array.from(new Array(fin.date()), (x, i) => i + 1))
@@ -131,28 +192,33 @@
           result[element] += 1
         })
         return result
+      },
+      months () {
+        return this.$store.getters.months
+      },
+      AttStatuses () {
+        return this.$store.getters.attStatus
+      },
+      statuses () {
+        return Object.keys(this.AttStatuses)
       }
     },
     watch: {
       userid: function (val) {
+        this.selection = []
+        this.getEvents()
+      },
+      selectedDate: function (val) {
         this.getEvents()
       }
     },
     methods: {
-      anterior: function () {
-        this.$emit('anterior')
-        this.getEvents()
-      },
-      siguiente: function () {
-        this.$emit('siguiente')
-        this.getEvents()
-      },
       getEvents: function () {
         this.$http.get('/asistencia', {
           params: {
             userid: this.userid,
-            anio: this.info.anio,
-            mes: this.info.mesActual
+            anio: this.selectedDate.year,
+            mes: this.selectedDate.month
           }
         })
         .then((res) => {
@@ -167,40 +233,36 @@
           empty: wd === ''
         }
       },
-      openDetail: function (dia) {
-        if (dia) {
-          this.dia = dia
-          this.modalTitle = 'Asistencia del día ' + dia + ' de ' + this.meses[this.info.mesActual - 1] + ' de ' + this.info.anio
-          this.selectedStatus = null
-          this.observaciones = null
-          this.$http.get('/asistencia', {
-            params: {
-              userid: this.userid,
-              anio: this.info.anio,
-              mes: this.info.mesActual,
-              dia: dia
-            }
-          })
-          .then((res) => {
-            this.selectedDay = res.data.data[0]
-            if (this.selectedDay) this.selectedStatus = this.statuses.indexOf(this.selectedDay.status) >= 0 ? this.selectedDay.status : null
-            if (this.selectedDay) this.observaciones = this.selectedDay.observaciones
-            this.$refs.attModal.show()
-            this.$forceUpdate()
-          })
-        }
+      getDayDetail: function (d) {
+        this.isLoadingDayDetail = true
+        this.$http.get('/asistencia', {
+          params: {
+            userid: this.userid,
+            anio: this.selectedDate.year,
+            mes: this.selectedDate.month,
+            dia: d
+          }
+        })
+        .then((res) => {
+          this.selectedDay = res.data.data[0] ? res.data.data[0] : {}
+          this.dayToUpdate = d
+          this.patchDay = res.data.data[0] || false
+          this.$forceUpdate()
+        })
+        .finally(() => { this.isLoadingDayDetail = false })
       },
       updateAtt: function () {
-        const url = '/asistencia' + (this.selectedDay ? `/${this.selectedDay.id}` : '')
+        const url = '/asistencia' + (this.patchDay ? `/${this.selectedDay.id}` : '')
         const data = {
           userid: this.userid,
-          anio: this.info.anio,
-          mes: this.info.mesActual,
-          dia: this.dia,
-          observaciones: this.observaciones,
-          status: this.selectedStatus
+          anio: this.selectedDate.year,
+          mes: this.selectedDate.month,
+          dia: this.dayToUpdate,
+          observaciones: this.selectedDay.observaciones,
+          status: this.selectedDay.status
         }
-        const method = this.selectedDay ? 'patch' : 'post'
+
+        const method = this.patchDay ? 'patch' : 'post'
         this.$http({
           method,
           url: url,
@@ -209,6 +271,29 @@
         .then((res) => {
           this.getEvents()
         })
+      },
+      handleDayClick: function (d) {
+        console.log(d)
+        if (event.ctrlKey) {
+          console.log('ctr!')
+        } else {
+          if (this.selection[0] !== d) {
+            this.selection = []
+            this.getDayDetail(d)
+          }
+        }
+        this.toggleSelect(d)
+      },
+      toggleSelect: function (d) {
+        if (this.selection.indexOf(d) >= 0) {
+          this.selection.splice(this.selection.indexOf(d), 1)
+        } else {
+          this.selection.push(d)
+          if (this.selection.length > 2) {
+            this.selection = this.selection.sort((a, b) => a > b)
+            console.log(this.selection)
+          }
+        }
       }
     },
     created: function () {
@@ -220,23 +305,9 @@
 ul {list-style-type: none;}
 
 .calendar{
-  box-shadow: 0 10px 10px #999;
   margin-left: auto;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
-
-.month {
-    padding: 10px 25px;
-    width: 100%;
-    background: #1abc9c;
-    text-align: center;
-    .title {
-      color:#fff;
-      text-transform: uppercase;
-      line-height: 18px;
-    }
-}
-
 
 .weekdays {
     margin: 0 !important;
@@ -257,9 +328,10 @@ ul {list-style-type: none;}
     padding-bottom: 1px;
 }
 
+
 .calendar-day.data:hover{
   .day-label{
-    background-color: #414141;
+    background-color:grey;
     color: #fff;
   }
   .event-container{
@@ -270,9 +342,9 @@ ul {list-style-type: none;}
 .calendar-day{
   width: 14.28571428571429%;
   border: 1px solid #eee;
-  min-height: 95px;
+  min-height: 80px;
   max-height: 110px;
-  padding: 5px; 
+  padding: 20px 0 10px 0; 
 }
 .calendar-day.data{
   background-color: white;
@@ -282,6 +354,8 @@ ul {list-style-type: none;}
   .day-label{
     width: 22px;
     height: 22px;
+    margin-top: -15px;
+    margin-left: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -290,6 +364,10 @@ ul {list-style-type: none;}
     border-radius: 50%;
     span{
       display: flex;
+    }
+    &.selected{
+      background-color:teal;
+      color: #fff;
     }
   }
 }

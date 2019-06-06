@@ -6,6 +6,8 @@
       b-collapse(is-nav id="nav_collapse")
         b-navbar-nav
           li.nav-item
+            router-link.nav-link(:to="{ name: 'detalleAsistenciaIndex', params: Object.assign({},currentDate) }" active-class="active") Detalle de asistencia
+          li.nav-item
             router-link.nav-link(to="/empleados/registro" active-class="active") Registro de emplado
           li.nav-item
             router-link.nav-link(to="/dispositivos" active-class="active") Dispositivos en línea
@@ -24,6 +26,9 @@ export default {
   computed: {
     isLoggedIn () {
       return this.$store.getters.isLoggedIn
+    },
+    currentDate () {
+      return this.$store.getters.currentDate
     }
   },
   methods: {

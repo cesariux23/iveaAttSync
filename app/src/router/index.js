@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from '@/components/Hello'
 import Login from '@/components/Login'
-import Asistencia from '@/components/asistencia/Asistencia'
+import DetalleAsistencia from '@/components/asistencia/DetalleAsistencia'
+import ShowEvents from '@/components/asistencia/ShowEvents'
 import Registro from '@/components/empleados/Registro'
 import Dispositivos from '@/components/dispositivos/ListaDispositivos'
 import store from '@/store'
@@ -22,9 +23,16 @@ const router = new Router({
       component: Login
     },
     {
-      path: '/asistencia',
-      name: 'asistenciaGeneral',
-      component: Asistencia
+      path: '/asistencia/:year/:month',
+      name: 'detalleAsistenciaIndex',
+      component: DetalleAsistencia,
+      children: [
+        {
+          path: ':id',
+          name: 'detalleAsistencia',
+          component: ShowEvents
+        }
+      ]
     },
     {
       path: '/empleados/registro',
@@ -49,7 +57,6 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // si ha iniciado sesion, y no esta en el login, se redirecciona
   if (to.name !== 'login' && !store.getters.isLoggedIn) {
-    console.log(to)
     next('/login')
   } else {
     // si ya inicio la sesion, se redirecciona a la asistencia

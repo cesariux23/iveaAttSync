@@ -1,7 +1,7 @@
 <template lang="pug">
   .dia
     div(v-if= "eventos.length > 0")
-      i.fa.fa-2x(:class='statusClass' :title='evento.status')
+      att-icon.fa-2x(:status='evento.status')
       .container.event-container
         .row(:class='eventsClass')
           .col-lg-6(v-if= "evento.entradaEvt" title="Entrada")
@@ -12,9 +12,11 @@
               span {{evento.salidaEvt.hora | zeroFill}}:{{evento.salidaEvt.minuto | zeroFill}}
 </template>
 <script>
+  import AttIcon from '../common/AttIcon'
   export default {
-    name: 'Dia',
+    name: 'Day',
     props: ['eventos'],
+    components: {AttIcon},
     data () {
       return {
         eventsClass: ''
@@ -26,48 +28,6 @@
           return this.eventos[0]
         }
         return false
-      },
-      statusClass: function () {
-        let classes = ''
-        this.eventsClass = 'visible'
-        switch (this.evento.status) {
-          case 'PENDIENTE':
-            classes = 'fa-circle-thin text-secondary'
-            break
-          case 'ASISTENCIA':
-            classes = 'fa-check'
-            this.eventsClass = ''
-            break
-          case 'COMISIÓN':
-            classes = 'fa-external-link'
-            break
-          case 'RETARDO RECUPERABLE':
-            classes = 'fa-clock-o'
-            break
-          case 'RETARDO MAYOR':
-            classes = 'fa-clock-o text-warning'
-            break
-          case 'NO LABORAL':
-            classes = 'fa-calendar-minus-o text-info'
-            break
-          case 'PERIODO VACACIONAL':
-            classes = 'fa-user-o text-secondary'
-            break
-          case 'OMISIÓN DE SALIDA':
-            classes = 'fa-sign-out text-warning'
-            break
-          case 'OMISIÓN DE ENTRADA':
-            classes = 'fa-sign-in text-warning'
-            break
-          case 'PUNTUALIDAD':
-            classes = 'fa-check-circle-o text-success'
-            this.eventsClass = ''
-            break
-          case 'INASISTENCIA':
-            classes = 'fa-times text-danger'
-            break
-        }
-        return classes
       }
     },
     filters: {

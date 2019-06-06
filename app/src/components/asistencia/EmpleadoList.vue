@@ -1,36 +1,41 @@
 <template lang='pug'>
-  .card
-    .card-header
-      .form-group
+  .border-right
+    nav.navbar.navbar-light.bg-light
         .input-group
           b-form-input(v-model="search"
           type="text"
           placeholder="Buscar ...")
-          span.input-group-addon(v-if="search")
-            i.fa.fa-times
-    .card-body
-      .empleados-list
+          .input-group-append(v-if="search")
+            b-button(variant="outline-danger" @click="search = ''")
+              i.fa.fa-times
+    .card.border-right-0
+      .card-body.border-0
         div(v-if="search")
-          .alert.alert-warning(v-if="filteredEmpleados.length === 0") Sin resultados.
-          .alert.alert-info(v-else) Mostrando {{filteredEmpleados.length}} resultado(s).
-        b-list-group
-          b-list-group-item(v-for="emp in filteredEmpleados" :key="emp.userid" v-on:click="selectEmpleado(emp)" href="#")
-            h5
-              b {{ emp.userid }}
-            p {{emp.nombre}}
-            p.text-secondary {{emp.adscripcion}}
-    .card-footer
-      .row
-        .col-md-6.text-left
-          button.btn.btn-light(title= "Empleado anterior")
-            i.fa.fa-chevron-left
-        .col-md-6.text-right
-          button.btn.btn-light(title= "Siguente empleado")
-            i.fa.fa-chevron-right
+          .alert.alert-warning.border-0(v-if="filteredEmpleados.length === 0") Sin resultados.
+          .alert.alert-info.border-0(v-else) Mostrando {{filteredEmpleados.length}} resultado(s)
+        .empleados-list
+          b-list-group.border-0
+            b-list-group-item.container.border-right-0( v-for="emp in filteredEmpleados" :key="emp.userid" :to="{ name: 'detalleAsistencia', params: Object.assign({ id: emp.userid }) }" replace)
+              .row
+                .col-2.px-0
+                  h6.text-center
+                    b {{ emp.userid }}
+                .col
+                  p {{emp.nombre}}
+                  p.text.small {{emp.adscripcion}}
+    nav.navbar.navbar-light.bg-light.position-fixed-bottom
+      button.btn.btn-light(title= "Empleado anterior")
+        i.fa.fa-chevron-left
+      button.btn.btn-light(title= "Mostrar deshabilitados")
+        i.fa.fa-user
+      button.btn.btn-light(title= "Siguente empleado")
+        i.fa.fa-chevron-right
+      
   </template>
 <script>
   export default {
     name: 'empleado-list',
+    props: ['selectedDate'],
     data () {
       return {
         search: '',
@@ -53,35 +58,41 @@
         this.$emit('selectedEmp', emp)
       }
     },
+    watch: {
+      $route: function (val) {
+        this.$forceUpdate()
+      }
+    },
     created () {
-      console.log('Created')
       this.$http.get('/empleados')
       .then((res) => {
-        console.log(res)
         this.empleados = res.data.data
       })
     }
   }
 </script>
 <style lang="less" scoped>
+
   div{
     border-radius: 0;
   }
   .card {
     display: flex;
     flex-direction: column;
-    >.card-header {
-      max-height: 115px;
-    }
     >.card-body{
-      height: calc(~"100vh - 200px");
-      overflow: auto;
+      height: calc(~"100vh - 166px");
+      overflow-y: auto;
+      overflow-x: hidden;
       padding: 0;
+      .alert{
+        margin: 0;
+      }
 
       .list-group-item{
         
         line-height: 18px;
         padding: 10px;
+        border-radius: 0;
         p{
           margin: 0;
         }
