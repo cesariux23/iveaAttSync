@@ -1,10 +1,9 @@
 var models = require('../models');
-const LIMIT = 10000
+const LIMIT = 10000 // numero maximo de eventos a procesar
 
 const processAtt = function (eventos) {
-    
-        console.log('Procesando los siguientes eventos recibidos: ' + eventos.length);
-        return models.Evento.bulkCreate(eventos,{ignoreDuplicates: true})   
+    console.log('Procesando los siguientes eventos recibidos: ' + eventos.length);
+    return models.Evento.bulkCreate(eventos,{ignoreDuplicates: true})   
     
 }
 
@@ -12,7 +11,17 @@ module.exports = (czs) =>{
     var coordinaciones = {}
     var clientes = new Map();
     var coords = [];
-    var test = 'test';
+    const today = new Date();
+    var year = today.getFullYear();
+    var month = today.getMonth()+1;
+    // calcula el limite de eventos marcados como pendientes a procesar
+    // será solo a partir del mes anterior
+    if (month == 1 ) {
+        month = 12;
+        year--;
+    } else {
+        month--;
+    }
 
     czs.on('connection', function(client) {
 
@@ -47,7 +56,13 @@ module.exports = (czs) =>{
                 const fb = new Date(b.fecha)
                 return fa.getTime() - fb.getTime()
             })
-            const last = eventos.length > LIMIT ? eventos.slice(eventos.length - LIMIT, eventos.length) : eventos
+
+            //todo: establecer variable para poder manejar esta limitante mediante la solicitud
+            var last = eventos.length > LIMIT ? eventos.slice(eventos.length - LIMIT, eventos.length) : eventos
+            // se filtran los eventos para procesar solo los eventos dentro del periodo establecido
+            if (last.length == LIMIT) {
+                last = last.filter( e => e.anio == year && e.mes >= month);
+            }
             const zona =  last[0].zona
             client.broadcast.emit('logSync', {zona: zona, mensaje: 'Procesando datos recibidos...'})
             return models.sequelize.transaction(function (t) {
@@ -67,6 +82,12 @@ module.exports = (czs) =>{
                     client.broadcast.emit('logSync', {zona: zona, mensaje: 'Generando asociación automática...'})
                     models.Asistencia.findAll({
                         where: {
+                            anio: {
+                                $gte: year
+                            },
+                            mes: {
+                                $gte: month
+                            },
                             status:'PENDIENTE'
                         },
                     }).then( (asistencia) => {
@@ -116,6 +137,7 @@ module.exports = (czs) =>{
                         })
                     })
                     .finally(function() {
+                        console.log(zona);
                         client.broadcast.emit('logSync', {zona: zona, mensaje: 'Sincronización finalizada.', online: true})
                     })
                 })
