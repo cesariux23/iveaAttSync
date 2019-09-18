@@ -20,6 +20,7 @@
     "font-awesome": "^4.7.0",
     "moment": "^2.22.1",
     "node-sass": "^4.11.0",
+    "portal-vue": "^2.1.6",
     "pug": "^2.0.3",
     "rimraf": "^2.6.2",
     "sass-loader": "^6.0.6",

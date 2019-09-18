@@ -20,7 +20,7 @@
         b  Tolerancia:
         |  {{empleado.tolerancia ? empleado.tolerancia : '--'}} min.
       .col.col-lg-1
-        b-button(variant="light")
+        b-button(variant="light" :to="{name: 'edicionEmpleado', params: { id: userid}}")
           i.fa.fa-pencil
           |  Editar
     h4.text-uppercase.border-bottom.pb-2

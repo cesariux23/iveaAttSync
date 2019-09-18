@@ -9,6 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var asistencia = require('./routes/asistencia');
 var empleados = require('./routes/empleados');
+var eventos = require('./routes/eventos');
 var lessMiddleware = require('less-middleware');
 
 //env config
@@ -38,6 +39,7 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/api/asistencia', asistencia);
 app.use('/api/empleados', empleados);
+app.use('/api/eventos', eventos);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

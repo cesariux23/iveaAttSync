@@ -7,6 +7,7 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import './styles/main.less'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import PortalVue from 'portal-vue'
 import vueMoment from 'vue-moment'
 import axios from 'axios'
 import io from 'socket.io-client'
@@ -17,6 +18,7 @@ Vue.use(vueMoment)
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
+Vue.use(PortalVue)
 
 /** Global config **/
 const baseUrl = process.env.BASE_URL

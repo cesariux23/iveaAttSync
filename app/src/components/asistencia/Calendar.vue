@@ -4,9 +4,8 @@
     .row
       .col
         .calendar
-          ul.weekdays
-            li.text-uppercase(v-for="wd in weekdays") {{wd}}
-
+          .row.weekdays
+            span.text-uppercase(v-for="wd in weekdays") {{wd}}
           .row.days
             .calendar-day(v-for="d in dias" v-bind:class="dayClass(d)"  @click="handleDayClick(d)")
               .day-label.position-absolute(:class="{selected: selection.indexOf(d) >= 0 }")
@@ -48,8 +47,8 @@
                           i.fa.fa-exclamation-circle
       .col-5
         div(v-if="selection.length > 0")
-          .card
-            header.card-header
+          b-card
+            template(slot="header")
               div(v-if="selection.length == 1")
                 b-button.float-right(variant="light" @click="selection = []")
                   i.fa.fa-times
@@ -67,48 +66,72 @@
                   b  {{selection.length}}
                   |  días
             div(v-if="selection.length > 1")
-              .alert.alert-warning
+              .alert.alert-info
                 | Días seleccionados:
-                b  {{selection.join(', ')}}      
-            .card-body
-              div(v-if="isLoadingDayDetail")
-                i.fa.fa-circle-o-notch.fa-fw.fa-2x.fa-spin.text-muted
-              div(v-else)
-                div(v-if="selection.length === 1")
+                b  {{selection.join(', ')}}
+            .container(v-if="isLoadingDayDetail")
+              i.fa.fa-circle-o-notch.fa-fw.fa-2x.fa-spin.text-muted
+            b-tabs(v-else)
+              b-tab(title="Detalles" active)
+                .container
+                  .text-center
+                    p(v-if="selectedDay.status")
+                      att-icon.fa-3x(:status='selectedDay.status')
+                      br
+                      | {{selectedDay.status}}
+                    p(v-else)
+                      i.fa.fa-3x.fa-question-circle
+                      br
+                      | SIN DEFINIR
+                  .alert.alert-primary
+                    h5
+                      b Eventos:
+                    .row
+                      .col
+                        b Entrada: 
+                        span(v-if="selectedDay.entradaEvt") {{selectedDay.entradaEvt.hora | zeroFill}}:{{selectedDay.entradaEvt.minuto | zeroFill}} hrs.
+                        span(v-else)
+                          | No definido.
+                      .col
+                        b Salida: 
+                        span(v-if="selectedDay.salidaEvt") {{selectedDay.salidaEvt.hora | zeroFill}}:{{selectedDay.salidaEvt.minuto | zeroFill}} hrs.
+                        span(v-else)
+                          | No definido.
+                  div(v-if="selectedDay.observaciones")
+                    b Observaciones:
+                    br
+                    .alert.alert-secondary {{selectedDay.observaciones}}
+              b-tab(:title="'Eventos ('+registros.length+')'")
+                .container(v-if="selection.length === 1")
                   div(v-if="selectedDay")
-                    .alert.alert-info
-                      h5 Eventos asociados
-                      .row
-                        .col
-                          b Entrada: 
-                          span(v-if="selectedDay.entradaEvt") {{selectedDay.entradaEvt.hora | zeroFill}}:{{selectedDay.entradaEvt.minuto | zeroFill}} hrs.
-                          span(v-else)
-                            i.fa.fa-exclamation-circle
-                            |   No definido.
-                        .col
-                          b Salida: 
-                          span(v-if="selectedDay.salidaEvt") {{selectedDay.salidaEvt.hora | zeroFill}}:{{selectedDay.salidaEvt.minuto | zeroFill}} hrs.
-                          span(v-else)
-                            i.fa.fa-exclamation-circle
-                            |   No definido.
-                  .alert.alert-secondary(v-else) Sin eventos registrados
-                      
-                b-form
-                  b-form-group
-                    label Marcar la asistencia como
-                    b-form-select(id="status" :options="statuses" required v-model="selectedDay.status")
-                  b-form-group
-                    label Observaciones
-                    b-form-textarea(
-                      id="observaciones"
-                      v-model="selectedDay.observaciones"
-                      placeholder="Observaciones"
-                      :rows="3"
-                      :max-rows="6")
-                  b-form-group
-                    b-button(variant="success" @click="updateAtt")
-                      i.fa.fa-check
-                      |  Guardar
+                    ol(v-if="registros && registros.length > 0")
+                      li(v-for="evnt in registros")
+                        | {{evnt.hora | zeroFill}}:{{evnt.minuto | zeroFill}} hrs. 
+                        span.badge.badge-success(v-if="evnt.id === selectedDay.entrada")
+                          i.fa.fa-sign-in
+                          |   Entrada
+                        span.badge.badge-info(v-if="evnt.id === selectedDay.salida")
+                          i.fa.fa-sign-out
+                          |   Salida
+                    .alert.alert-warning(v-else) Sin eventos registrados
+              b-tab(title="Actualizar")
+                .container
+                  b-form
+                    b-form-group
+                      label Marcar la asistencia como
+                      b-form-select(id="status" :options="statuses" required v-model="selectedDay.status")
+                    b-form-group
+                      label Observaciones
+                      b-form-textarea(
+                        id="observaciones"
+                        v-model="selectedDay.observaciones"
+                        placeholder="Observaciones"
+                        :rows="3"
+                        :max-rows="6")
+                    b-form-group
+                      b-button(variant="success" @click="updateAtt")
+                        i.fa.fa-check
+                        |  Guardar
 
         div(v-else)
           .card
@@ -142,6 +165,7 @@
     data () {
       return {
         eventos: [],
+        registros: [],
         asistencia: [],
         selectedStatus: null,
         selection: [],
@@ -234,6 +258,7 @@
         }
       },
       getDayDetail: function (d) {
+        this.registros = []
         this.isLoadingDayDetail = true
         this.$http.get('/asistencia', {
           params: {
@@ -247,13 +272,29 @@
           this.selectedDay = res.data.data[0] ? res.data.data[0] : {}
           this.dayToUpdate = d
           this.patchDay = res.data.data[0] || false
-          this.$forceUpdate()
         })
         .finally(() => { this.isLoadingDayDetail = false })
+
+        this.$http.get('/eventos', {
+          params: {
+            userid: this.userid,
+            anio: this.selectedDate.year,
+            mes: this.selectedDate.month,
+            dia: d
+          }
+        }).then((res) => {
+          if (res.data && res.data.data.length > 0) {
+            this.$set(this, 'registros', res.data.data)
+            this.$forceUpdate()
+          } else {
+            this.$set(this, 'registros', [])
+          }
+        })
       },
       updateAtt: function () {
-        const url = '/asistencia' + (this.patchDay ? `/${this.selectedDay.id}` : '')
-        const data = {
+        var toUpdate = []
+        var toCreate = []
+        let data = {
           userid: this.userid,
           anio: this.selectedDate.year,
           mes: this.selectedDate.month,
@@ -261,16 +302,72 @@
           observaciones: this.selectedDay.observaciones,
           status: this.selectedDay.status
         }
+        let method = this.patchDay ? 'patch' : 'post'
+        if (this.selection.length > 1) {
+          this.patchDay = false
+          method = 'post'
+        }
 
-        const method = this.patchDay ? 'patch' : 'post'
-        this.$http({
-          method,
-          url: url,
-          data
-        })
-        .then((res) => {
-          this.getEvents()
-        })
+        if (!this.patchDay) {
+          if (this.selection.length > 1) {
+            // con la seleccion multiple se debe crear los registros faltantes y se deberá actualizar los existentes
+            // se hace una separacion inicial
+            this.selection.forEach(s => {
+              const result = this.asistencia.find(a => a.dia === s)
+              console.log(result)
+              if (result) {
+                toUpdate.push(result.id) // se almacena los ids de los registros a actualizar
+              } else {
+                toCreate.push(s) // solo se almacena los dias
+              }
+            })
+
+            if (toUpdate.length > 0) {
+              // se actualizan los dias que ya existen en la DB
+              this.$http({
+                method: 'patch',
+                url: '/asistencia',
+                data: {
+                  ids: toUpdate,
+                  status: data.status,
+                  observaciones: data.observaciones
+                }
+              })
+              .then((res) => {
+                if (toCreate.length === 0) {
+                  this.getEvents()
+                  this.$bvToast.toast('Se actualizó la información con éxito en la base de datos', {
+                    title: `Información`,
+                    variant: 'success',
+                    solid: true
+                  })
+                }
+              })
+            }
+            // se crea un array con los objetos nuevos
+            const days = toCreate.map(d => { return { ...data, dia: d } })
+            data = days
+          } else {
+            data = [data]
+          }
+        }
+
+        if (this.patchDay || data.length > 0) {
+          const url = '/asistencia' + (this.patchDay ? `/${this.selectedDay.id}` : '')
+          this.$http({
+            method,
+            url: url,
+            data
+          })
+          .then((res) => {
+            this.getEvents()
+            this.$bvToast.toast('Se actualizó la información con éxito en la base de datos', {
+              title: `Información`,
+              variant: 'success',
+              solid: true
+            })
+          })
+        }
       },
       handleDayClick: function (d) {
         console.log(d)
@@ -297,6 +394,7 @@
       }
     },
     created: function () {
+      console.log(this)
       this.getEvents()
     }
   }
@@ -315,7 +413,7 @@ ul {list-style-type: none;}
     background-color: #ddd;
 }
 
-.weekdays li {
+.weekdays span {
     display: inline-block;
     width: 14.28571428571429%;
     color: #666;
@@ -333,9 +431,6 @@ ul {list-style-type: none;}
   .day-label{
     background-color:grey;
     color: #fff;
-  }
-  .event-container{
-    visibility: visible;
   }
 }
 
@@ -372,10 +467,6 @@ ul {list-style-type: none;}
   }
 }
 
-.calendar-day.empty >*{
-  display: none;
-}
-
 .days li {
     list-style-type: none;
     display: inline-block;
@@ -383,7 +474,6 @@ ul {list-style-type: none;}
     height: 95px;
     text-align: center;
     font-size:12px;
-    margin: 0 2px 0 2px;
 }
 .days li.data{
   background-color: white;
@@ -392,10 +482,6 @@ ul {list-style-type: none;}
 
 .days li.empty{
   height: 0;
-}
-.days li.empty >*{
-  display: none;
-  
 }
 
 .days li .active {

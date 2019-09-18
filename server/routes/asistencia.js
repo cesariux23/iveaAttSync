@@ -28,10 +28,19 @@ router.get('/', cors(), function(req, res, next) {
 
 router.options('/', cors())
 router.post('/', cors(), function(req, res, next) {
-  models.Asistencia.create(req.body).then(function(asistencia) {
+  models.Asistencia.bulkCreate(req.body, { ignoreDuplicates: true }).then(function(asistencia) {
     return res.json(200, {data: asistencia});
   });
 });
+
+router.patch('/', cors(), function(req, res, next) {
+  let ids = req.body.ids
+  delete req.body.ids
+  models.Asistencia.update(req.body, {  where: { id: ids  } }).then(function(asistencia) {
+    return res.json(200, {data: asistencia});
+  });
+});
+
 router.options('/:id', cors())
 router.patch('/:id', cors(), function(req, res, next) {
   models.Asistencia.update(req.body, { where: { id: req.params.id } } ).then(function(asistencia) {

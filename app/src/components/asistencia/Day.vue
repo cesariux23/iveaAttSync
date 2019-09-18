@@ -52,9 +52,6 @@
 }
 .container{
   padding-top: 0;
-  .row{
-    visibility: hidden;
-  }
 }
 .visible{
   visibility: visible;
