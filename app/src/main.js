@@ -4,10 +4,10 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import BootstrapVue from 'bootstrap-vue'
+import Notifications from 'vue-notification'
 import 'bootstrap/dist/css/bootstrap.css'
 import './styles/main.less'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import PortalVue from 'portal-vue'
 import vueMoment from 'vue-moment'
 import axios from 'axios'
 import io from 'socket.io-client'
@@ -18,7 +18,7 @@ Vue.use(vueMoment)
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
-Vue.use(PortalVue)
+Vue.use(Notifications)
 
 /** Global config **/
 const baseUrl = process.env.BASE_URL

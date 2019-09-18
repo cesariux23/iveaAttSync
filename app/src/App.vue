@@ -18,6 +18,7 @@
 
     .main.h-100(:class="{'space-navbar' : isLoggedIn}")
       router-view
+    notifications(group="updated" position="bottom right" classes="custom")
 </template>
 
 <script>
@@ -40,7 +41,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less">
 .main {
   min-height: 100%;
 }
@@ -52,5 +53,32 @@ html{
 }
 body{
   height: 100%;
+}
+.custom{
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 10px;
+  margin: 0 5px 5px;
+
+  color: #ffffff;
+  background: #44A4FC;
+  border-left: 5px solid #187FE7;
+
+  &.warn {
+    background: #ffb648;
+    border-left-color: #f48a06;
+  }
+
+  &.error {
+    background: #E54D42;
+    border-left-color: #B82E24;
+  }
+
+  &.success {
+    background: #68CD86;
+    border-left-color: #42A85F;
+  }
 }
 </style>

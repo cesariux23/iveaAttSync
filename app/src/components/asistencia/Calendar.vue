@@ -71,7 +71,7 @@
                 b  {{selection.join(', ')}}
             .container(v-if="isLoadingDayDetail")
               i.fa.fa-circle-o-notch.fa-fw.fa-2x.fa-spin.text-muted
-            b-tabs(v-else)
+            b-tabs(v-else  v-model="tabIndex")
               b-tab(title="Detalles" active)
                 .container
                   .text-center
@@ -175,7 +175,8 @@
         modalTitle: '',
         dayToUpdate: false,
         patchDay: false,
-        isLoadingDayDetail: false
+        isLoadingDayDetail: false,
+        tabIndex: 0
       }
     },
     filters: {
@@ -335,11 +336,13 @@
               })
               .then((res) => {
                 if (toCreate.length === 0) {
+                  this.selection = []
                   this.getEvents()
-                  this.$bvToast.toast('Se actualizó la información con éxito en la base de datos', {
-                    title: `Información`,
-                    variant: 'success',
-                    solid: true
+                  this.$notify({
+                    group: 'updated',
+                    title: 'Información',
+                    type: 'success',
+                    text: 'Cambios guardados en la base de datos'
                   })
                 }
               })
@@ -361,21 +364,26 @@
           })
           .then((res) => {
             this.getEvents()
-            this.$bvToast.toast('Se actualizó la información con éxito en la base de datos', {
-              title: `Información`,
-              variant: 'success',
-              solid: true
+            if (toCreate.length === 0) {
+              this.selection = []
+            } else {
+              this.tabIndex = 0
+            }
+            this.$notify({
+              group: 'updated',
+              title: 'Información',
+              text: 'Cambios guardados en la base de datos',
+              type: 'success'
             })
           })
         }
       },
       handleDayClick: function (d) {
         console.log(d)
-        if (event.ctrlKey) {
-          console.log('ctr!')
-        } else {
+        if (!event.ctrlKey) {
           if (this.selection[0] !== d) {
             this.selection = []
+            this.tabIndex = 0
             this.getDayDetail(d)
           }
         }
@@ -386,15 +394,16 @@
           this.selection.splice(this.selection.indexOf(d), 1)
         } else {
           this.selection.push(d)
-          if (this.selection.length > 2) {
-            this.selection = this.selection.sort((a, b) => a > b)
-            console.log(this.selection)
-          }
+        }
+        if (this.selection.length > 1) {
+          this.selection = this.selection.sort((a, b) => a > b)
+          this.tabIndex = 2
+        } else {
+          this.tabIndex = 0
         }
       }
     },
     created: function () {
-      console.log(this)
       this.getEvents()
     }
   }
