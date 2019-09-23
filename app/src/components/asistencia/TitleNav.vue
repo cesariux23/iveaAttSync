@@ -1,15 +1,17 @@
 <template lang="pug">
   nav.navbar.navbar-light.bg-light.border-bottom
-    b-button(variant="link" @click="toggleShowSideNav" title='Mostrar menú')
+    b-button(variant="light" @click="toggleShowSideNav" title='Mostrar menú')
       i.fa(:class="{ 'fa-arrow-left': showSideNav, 'fa-search': !showSideNav }")
-    b Detalle de la asistencia
+    b
+      |  Detalle de la asistencia
     form.form-inline
       b-button-toolbar
         b-button-group
           b-button(variant="light" @click="goToMonth(month - 1)" title="Anterior")
             i.fa.fa-chevron-left
           b-button.current-month.text-center(variant="light")
-            span.text-capitalize {{monthTitle}}
+            i.fa.fa-calendar-o
+            b.text-capitalize  {{monthTitle}}
           b-button(variant="light" @click="goToMonth(month + 1)" title="Siguiente")
             i.fa.fa-chevron-right
 </template>

@@ -45,7 +45,7 @@
                         span(v-else)
                           b No definido.
                           i.fa.fa-exclamation-circle
-      .col-5
+      .col-4
         div(v-if="selection.length > 0")
           b-card
             template(slot="header")
@@ -364,7 +364,7 @@
           })
           .then((res) => {
             this.getEvents()
-            if (toCreate.length === 0) {
+            if (!this.patchDay && toCreate.length === 0) {
               this.selection = []
             } else {
               this.tabIndex = 0
@@ -431,7 +431,7 @@ ul {list-style-type: none;}
 
 .days {
     background: #eee;
-    margin: 0;
+    margin: 0 !important;
     padding-bottom: 1px;
 }
 

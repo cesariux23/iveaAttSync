@@ -5,27 +5,29 @@
       |  {{ empleado.nombre }}
     .row      
       .col-1
-        b  ID:
+        b  ID
+        br
         |  {{ userid }}
       .col
-        b  Adscripción:
+        b  Adscripción
+        br
         |  {{ empleado.adscripcion }}
       .col.col-lg-2
-        b  Entrada:
-        |  {{empleado.entrada}}
+        b  Entrada
+        br
+        |  {{empleado.entrada ? empleado.entrada.substring(0,5) : ''}}
       .col.col-lg-2
-        b Salida:
-        |  {{empleado.salida}}
+        b Salida
+        br
+        |  {{empleado.salida ? empleado.salida.substring(0,5) : ''}}
       .col.col-lg-2
-        b  Tolerancia:
+        b  Tolerancia
+        br
         |  {{empleado.tolerancia ? empleado.tolerancia : '--'}} min.
       .col.col-lg-1
         b-button(variant="light" :to="{name: 'edicionEmpleado', params: { id: userid}}")
           i.fa.fa-pencil
           |  Editar
-    h4.text-uppercase.border-bottom.pb-2
-      i.fa.fa-calendar-o
-      |  {{months[month - 1]}} {{year}}
     .row
       .col
         calendar(v-bind:selectedDate="{ year: this.year, month: this.month}" v-bind:userid="userid")

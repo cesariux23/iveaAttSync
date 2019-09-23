@@ -43,7 +43,7 @@
 </script>
 <style scoped lang="less">
 .evt {
-  margin: 5px;
+  margin: 2px;
   padding: 1px;
   font-size: 12px;
   >span {
@@ -58,7 +58,8 @@
 }
 
 .col-lg-6{
-  padding: 0 5px;
+  padding: 0 2px;
+  font-size: 14px;
 }
 
 .badge{
