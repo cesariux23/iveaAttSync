@@ -1,5 +1,5 @@
 var models = require('../models');
-const LIMIT = 10000 // numero maximo de eventos a procesar
+const LIMIT = 5000 // numero maximo de eventos a procesar
 
 const processAtt = function (eventos) {
     console.log('Procesando los siguientes eventos recibidos: ' + eventos.length);
