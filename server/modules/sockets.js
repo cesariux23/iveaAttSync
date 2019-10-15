@@ -57,12 +57,16 @@ module.exports = (czs) =>{
                 return fa.getTime() - fb.getTime()
             })
 
+            const last = eventos.length > LIMIT ? eventos.slice(eventos.length - LIMIT, eventos.length) : eventos
+
+            /*
             //todo: establecer variable para poder manejar esta limitante mediante la solicitud
             var last = eventos.length > LIMIT ? eventos.slice(eventos.length - LIMIT, eventos.length) : eventos
             // se filtran los eventos para procesar solo los eventos dentro del periodo establecido
             if (last.length == LIMIT) {
                 last = last.filter( e => e.anio == year && e.mes >= month);
             }
+            */
             const zona =  last[0].zona
             client.broadcast.emit('logSync', {zona: zona, mensaje: 'Procesando datos recibidos...'})
             return models.sequelize.transaction(function (t) {
