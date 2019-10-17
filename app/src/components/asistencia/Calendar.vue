@@ -8,7 +8,7 @@
             span.text-uppercase(v-for="wd in weekdays") {{wd}}
           .row.days
             .calendar-day(v-for="d in dias" v-bind:class="dayClass(d)"  @click="handleDayClick(d)")
-              .day-label.position-absolute(:class="{selected: selection.indexOf(d) >= 0 }")
+              .day-label.position-absolute(:class="{selected: selection.indexOf(d) >= 0 }") 
                 span {{d}}
               day(v-bind:eventos="asistencia | attEvent(d)")
 
@@ -63,12 +63,8 @@
                   |  Limpiar
                 h4
                   i.fa.fa-calendar-plus-o
-                  b  {{selection.length}}
-                  |  días
-            div(v-if="selection.length > 1")
-              .alert.alert-info
-                | Días seleccionados:
-                b  {{selection.join(', ')}}
+                  b.text-primary  {{selection.length}}
+                  |  días seleccionados
             .container(v-if="isLoadingDayDetail")
               i.fa.fa-circle-o-notch.fa-fw.fa-2x.fa-spin.text-muted
             b-tabs(v-else  v-model="tabIndex")
@@ -248,6 +244,7 @@
         })
         .then((res) => {
           this.asistencia = res.data.data
+          this.selection = []
           this.$forceUpdate()
         })
       },
@@ -255,7 +252,8 @@
       dayClass: function (wd) {
         return {
           data: wd >= 1,
-          empty: wd === ''
+          empty: wd === '',
+          selected: this.selection.indexOf(wd) >= 0
         }
       },
       getDayDetail: function (d) {
@@ -379,24 +377,54 @@
         }
       },
       handleDayClick: function (d) {
-        console.log(d)
         if (!event.ctrlKey) {
-          if (this.selection[0] !== d) {
-            this.selection = []
-            this.tabIndex = 0
+          const last = this.selection.length > 0 ? this.selection[0] : false
+          this.selection = []
+          this.tabIndex = 0
+          if (last !== d) {
             this.getDayDetail(d)
+            this.selection.push(d)
+          }
+        } else {
+          if (event.altKey) {
+            this.toggleSelect(d, true)
+          } else {
+            this.toggleSelect(d)
           }
         }
-        this.toggleSelect(d)
       },
-      toggleSelect: function (d) {
+      toggleSelect: function (d, range = false) {
         if (this.selection.indexOf(d) >= 0) {
           this.selection.splice(this.selection.indexOf(d), 1)
         } else {
           this.selection.push(d)
+          if (this.selection.length > 1) {
+            // se verifica si se va a agregar un rango
+            if (range) {
+              let first = this.selection[0]
+              let last = d
+              if (first > d) {
+                last = first
+                first = d
+              }
+              const range = []
+              // se genera un rango
+              while (first <= last) {
+                // se valida que no sea un dia de fin de semana
+                // generar dia
+                const day = first++
+                const date = moment().year(this.selectedDate.year).month(this.selectedDate.month - 1).date(day)
+                const weekday = date.isoWeekday()
+                if (weekday <= 5) {
+                  range.push(day)
+                }
+              }
+              this.selection = range
+            }
+          }
         }
         if (this.selection.length > 1) {
-          this.selection = this.selection.sort((a, b) => a > b)
+          this.selection = this.selection.sort((a, b) => a - b)
           this.tabIndex = 2
         } else {
           this.tabIndex = 0
@@ -414,52 +442,55 @@ ul {list-style-type: none;}
 .calendar{
   margin-left: auto;
   margin-bottom: 10px;
+  border: 2px solid #888;
 }
 
 .weekdays {
     margin: 0 !important;
     padding: 10px 0;
-    background-color: #ddd;
+    background-color: #888;
+    border-bottom: 2px solid #FF8A33;
 }
 
 .weekdays span {
     display: inline-block;
     width: 14.28571428571429%;
-    color: #666;
+    color: #fff;
     text-align: center;
 }
 
 .days {
-    background: #eee;
+    background: #ccc;
     margin: 0 !important;
-    padding-bottom: 1px;
 }
 
 
 .calendar-day.data:hover{
   .day-label{
-    background-color:grey;
-    color: #fff;
+    background: #dfdfdf !important;
+    color: #FF8A33 !important;
+    font-weight: bold;
+    
   }
 }
 
 .calendar-day{
   width: 14.28571428571429%;
-  border: 1px solid #eee;
-  min-height: 80px;
-  max-height: 110px;
-  padding: 20px 0 10px 0; 
+  min-height: 75px;
+  padding: 0;
+  padding-top: 20px;
 }
 .calendar-day.data{
+  border: 1px solid #ddd;
   background-color: white;
-  color: #4d4d4d;
+  color: #888;
   text-align: center;
-  cursor: pointer; 
+  cursor: pointer;
   .day-label{
     width: 22px;
     height: 22px;
-    margin-top: -15px;
-    margin-left: 5px;
+    margin-top: -18px;
+    margin-left: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -467,12 +498,18 @@ ul {list-style-type: none;}
     color: #868e96;
     border-radius: 50%;
     span{
-      display: flex;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
     &.selected{
-      background-color:teal;
-      color: #fff;
+      background-color: #FF8A33;
+      color: #ffffff;      
+      font-weight: bold;
     }
+    
   }
 }
 

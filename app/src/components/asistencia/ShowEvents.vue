@@ -1,8 +1,5 @@
 <template lang="pug">
   .eventos
-    h4.border-bottom.pb-2
-      i.fa.fa-user-o
-      |  {{ empleado.nombre }}
     .row      
       .col-1
         b  ID
@@ -25,7 +22,7 @@
         br
         |  {{empleado.tolerancia ? empleado.tolerancia : '--'}} min.
       .col.col-lg-1
-        b-button(variant="light" :to="{name: 'edicionEmpleado', params: { id: userid}}")
+        b-button(variant="info" :to="{name: 'edicionEmpleado', params: { id: userid}}")
           i.fa.fa-pencil
           |  Editar
     .row
@@ -37,22 +34,9 @@
 import calendar from './Calendar'
 export default {
   name: 'showEvents',
+  props: ['empleado'],
   components: {
     calendar
-  },
-  data () {
-    return {
-      empleado: {}
-    }
-  },
-  methods: {
-    getEmpleado: function () {
-      this.$http.get('/empleados/' + this.userid)
-      .then((res) => {
-        this.empleado = res.data.data
-        this.$forceUpdate()
-      })
-    }
   },
   computed: {
     year () {
@@ -67,14 +51,6 @@ export default {
     userid () {
       return this.$route.params.id
     }
-  },
-  watch: {
-    userid: function (val) {
-      this.getEmpleado()
-    }
-  },
-  mounted () {
-    this.getEmpleado()
   }
 }
 </script>

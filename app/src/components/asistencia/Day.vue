@@ -1,15 +1,15 @@
 <template lang="pug">
   .dia
-    div(v-if= "eventos.length > 0")
-      att-icon.fa-2x(:status='evento.status')
-      .container.event-container
-        .row(:class='eventsClass')
-          .col-lg-6(v-if= "evento.entradaEvt" title="Entrada")
-            b-badge(variant="success")
-              span {{evento.entradaEvt.hora | zeroFill}}:{{evento.entradaEvt.minuto | zeroFill}}
-          .col-lg-6(v-if= "evento.salidaEvt" title="Salida")
-            b-badge(variant="info")
-              span {{evento.salidaEvt.hora | zeroFill}}:{{evento.salidaEvt.minuto | zeroFill}}
+    .container(v-if= "eventos.length > 0")
+      .row
+        .col-xl-6.col-icon
+          att-icon.fa-2x(:status='evento.status')
+        .col-xl-6.col-event
+            .row(:class='eventsClass')
+              .col-12(v-if= "evento.entradaEvt" title="Entrada")
+                span.text-info {{evento.entradaEvt.hora | zeroFill}}:{{evento.entradaEvt.minuto | zeroFill}}
+              .col-12(v-if= "evento.salidaEvt" title="Salida")
+                span.text-primary {{evento.salidaEvt.hora | zeroFill}}:{{evento.salidaEvt.minuto | zeroFill}}
 </template>
 <script>
   import AttIcon from '../common/AttIcon'
@@ -42,14 +42,6 @@
   }
 </script>
 <style scoped lang="less">
-.evt {
-  margin: 2px;
-  padding: 1px;
-  font-size: 12px;
-  >span {
-    padding: 3px;
-  }
-}
 .container{
   padding-top: 0;
 }
@@ -57,9 +49,13 @@
   visibility: visible;
 }
 
-.col-lg-6{
-  padding: 0 2px;
-  font-size: 14px;
+.col-event{
+  padding: 0 1px;  
+  font-size: 13px;
+}
+.col-icon{
+  margin-top: -10px;
+  font-size: 20px;
 }
 
 .badge{

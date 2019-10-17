@@ -11,7 +11,7 @@ const ATTSTATUS = {
   'PUNTUALIDAD': {
     name: 'PUNTUALIDAD',
     abb: 'P',
-    icon: 'check-circle-o',
+    icon: 'check',
     color: 'success'
   },
   'ASISTENCIA': {

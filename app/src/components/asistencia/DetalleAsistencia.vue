@@ -3,8 +3,8 @@
     .empleado-list-container(:class="{ open: showSideNav }")
       empleado-list( v-on:selectedEmp="updateSelected" :selectedDate="selectedDate")
     .details-container.w-100(:class="{ open: showSideNav }")
-      title-nav(:showSideNav="showSideNav" :selectedDate="selectedDate" @toggleShowSideNav="toggleShowSideNav" @goToMonth="goToMonth")
-      router-view
+      title-nav(:showSideNav="showSideNav" :empleado="empleado" :selectedDate="selectedDate" @toggleShowSideNav="toggleShowSideNav" @goToMonth="goToMonth")
+      router-view(:empleado="empleado")
 </template>
 <script>
 import empleadoList from './EmpleadoList'
@@ -55,11 +55,18 @@ export default {
         name,
         params
       })
+    },
+    getEmpleado: function () {
+      this.$http.get('/empleados/' + this.userid)
+      .then((res) => {
+        this.empleado = res.data.data
+        this.$forceUpdate()
+      })
     }
   },
   data () {
     return {
-      empleado: null,
+      empleado: {},
       showSideNav: true
     }
   },
@@ -70,12 +77,24 @@ export default {
     month () {
       return parseInt(this.$route.params.month)
     },
+    userid () {
+      return parseInt(this.$route.params.id)
+    },
     selectedDate () {
       return {
         year: this.year,
         month: this.month
       }
     }
+  },
+  watch: {
+    userid: function () {
+      this.getEmpleado()
+    }
+
+  },
+  created () {
+    this.getEmpleado()
   }
 }
 </script>
