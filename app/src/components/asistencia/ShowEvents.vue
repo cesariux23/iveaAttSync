@@ -1,32 +1,29 @@
 <template lang="pug">
   .eventos
-    .row      
+    .row
       .col-1
         b  ID
         br
-        |  {{ userid }}
+        |  {{ empleado.userid }}
       .col
         b  Adscripción
         br
         |  {{ empleado.adscripcion }}
-      .col.col-lg-2
-        b  Entrada
+      .col-2
+        b  Horario
         br
-        |  {{empleado.entrada ? empleado.entrada.substring(0,5) : ''}}
-      .col.col-lg-2
-        b Salida
-        br
-        |  {{empleado.salida ? empleado.salida.substring(0,5) : ''}}
-      .col.col-lg-2
+        | {{empleado.entrada ? empleado.entrada.substring(0,5) : ''}} - {{empleado.salida ? empleado.salida.substring(0,5) : ''}} hrs.
+      .col-2
         b  Tolerancia
         br
-        |  {{empleado.tolerancia ? empleado.tolerancia : '--'}} min.
-      .col.col-lg-1
+        |  {{empleado.tolerancia ? empleado.tolerancia : '15'}} min.
+      .col-2.text-right
         b-button(variant="info" :to="{name: 'edicionEmpleado', params: { id: userid}}")
           i.fa.fa-pencil
           |  Editar
     .row
       .col
+        hr
         calendar(v-bind:selectedDate="{ year: this.year, month: this.month}" v-bind:userid="userid")
     
 </template>

@@ -13,7 +13,7 @@
             i.fa.fa-chevron-left
           b-button.current-month.text-center(variant="light")
             i.fa.fa-calendar-o
-            b.text-capitalize  {{monthTitle}}
+            span.text-capitalize  {{monthTitle}}
           b-button(variant="light" @click="goToMonth(month + 1)" title="Siguiente")
             i.fa.fa-chevron-right
 </template>

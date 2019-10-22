@@ -99,7 +99,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@sidebar: 400px;
+@sidebar: 350px;
 
 .events-container {
   display: flex;

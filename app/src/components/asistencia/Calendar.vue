@@ -1,6 +1,6 @@
 <template lang='pug'>
   .calendar-container
-    h5 Eventos
+    h4 Registro de asistencia
     .row
       .col
         .calendar
@@ -11,124 +11,60 @@
               .day-label.position-absolute(:class="{selected: selection.indexOf(d) >= 0 }") 
                 span {{d}}
               day(v-bind:eventos="asistencia | attEvent(d)")
-
-          b-modal(ref="attModal"
-            :title="modalTitle"
-            closeTitle="Cerrar"
-            okTitle="Actualizar asistencia"
-            cancelTitle="Cancelar"
-            @ok="updateAtt"
-          )
-              .d-block
-                b-form-group(label="Marcar la asistencia de este día como" label-for="status")
-                  b-form-select(id="status" :options="statuses" required v-model="selectedStatus")
-                b-form-textarea(id="observaciones"
-                          v-model="observaciones"
-                          placeholder="Observaciones"
-                          :rows="3"
-                          :max-rows="6")
-                hr
-                .alert.alert-secondary(v-if= "!selectedDay") Sin eventos registrados
-                div(v-else)
-                  p Eventos Registrados:
-                  .alert.alert-info
-                    .row
-                      .col
-                        b Entrada: 
-                        span(v-if="selectedDay.entradaEvt") {{selectedDay.entradaEvt.hora | zeroFill}}:{{selectedDay.entradaEvt.minuto | zeroFill}} hrs.
-                        span(v-else)
-                          | No definido.
-                          i.fa.fa-exclamation-circle
-                      .col
-                        b Salida: 
-                        span(v-if="selectedDay.salidaEvt") {{selectedDay.salidaEvt.hora | zeroFill}}:{{selectedDay.salidaEvt.minuto | zeroFill}} hrs.
-                        span(v-else)
-                          b No definido.
-                          i.fa.fa-exclamation-circle
-      .col-4
+      .col-xl-4.col-lg-3.col-md-6
         div(v-if="selection.length > 0")
           b-card
             template(slot="header")
-              div(v-if="selection.length == 1")
-                b-button.float-right(variant="light" @click="selection = []")
-                  i.fa.fa-times
-                  |  Cerrar
-                h4
-                  i.fa.fa-calendar-check-o
-                  b  {{selection[0]}}
-                  |  de {{months[selectedDate.month - 1]}}
-              div(v-else)
-                b-button.float-right(variant="light" @click="selection = []")
-                  i.fa.fa-times
-                  |  Limpiar
-                h4
-                  i.fa.fa-calendar-plus-o
-                  b.text-primary  {{selection.length}}
-                  |  días seleccionados
-            .container(v-if="isLoadingDayDetail")
-              i.fa.fa-circle-o-notch.fa-fw.fa-2x.fa-spin.text-muted
-            b-tabs(v-else  v-model="tabIndex")
-              b-tab(title="Detalles" active)
-                .container
-                  .text-center
-                    p(v-if="selectedDay.status")
-                      att-icon.fa-3x(:status='selectedDay.status')
-                      br
-                      | {{selectedDay.status}}
-                    p(v-else)
-                      i.fa.fa-3x.fa-question-circle
-                      br
-                      | SIN DEFINIR
-                  .alert.alert-primary
-                    h5
-                      b Eventos:
-                    .row
-                      .col
-                        b Entrada: 
-                        span(v-if="selectedDay.entradaEvt") {{selectedDay.entradaEvt.hora | zeroFill}}:{{selectedDay.entradaEvt.minuto | zeroFill}} hrs.
-                        span(v-else)
-                          | No definido.
-                      .col
-                        b Salida: 
-                        span(v-if="selectedDay.salidaEvt") {{selectedDay.salidaEvt.hora | zeroFill}}:{{selectedDay.salidaEvt.minuto | zeroFill}} hrs.
-                        span(v-else)
-                          | No definido.
-                  div(v-if="selectedDay.observaciones")
-                    b Observaciones:
-                    br
-                    .alert.alert-secondary {{selectedDay.observaciones}}
-              b-tab(:title="'Eventos ('+registros.length+')'")
-                .container(v-if="selection.length === 1")
-                  div(v-if="selectedDay")
-                    ol(v-if="registros && registros.length > 0")
-                      li(v-for="evnt in registros")
-                        | {{evnt.hora | zeroFill}}:{{evnt.minuto | zeroFill}} hrs. 
-                        span.badge.badge-success(v-if="evnt.id === selectedDay.entrada")
-                          i.fa.fa-sign-in
-                          |   Entrada
-                        span.badge.badge-info(v-if="evnt.id === selectedDay.salida")
-                          i.fa.fa-sign-out
-                          |   Salida
-                    .alert.alert-warning(v-else) Sin eventos registrados
-              b-tab(title="Actualizar")
-                .container
-                  b-form
-                    b-form-group
-                      label Marcar la asistencia como
-                      b-form-select(id="status" :options="statuses" required v-model="selectedDay.status")
-                    b-form-group
-                      label Observaciones
-                      b-form-textarea(
-                        id="observaciones"
-                        v-model="selectedDay.observaciones"
-                        placeholder="Observaciones"
-                        :rows="3"
-                        :max-rows="6")
-                    b-form-group
-                      b-button(variant="success" @click="updateAtt")
-                        i.fa.fa-check
-                        |  Guardar
-
+              button.close(type="button" aria-label="Close" @click="selection = []")
+                  span(aria-hidden="true") &times
+              h4(v-if="selection.length == 1")
+                i.fa.fa-calendar-o
+                b  {{selection[0]}}
+                |  de {{months[selectedDate.month - 1]}}
+              h4(v-else)
+                i.fa.fa-calendar-check-o
+                b  {{selection.length}} 
+                |  días
+            .container.align-middle.text-center.text-muted(v-if="isLoadingDayDetail")
+              i.fa.fa-circle-o-notch.fa-fw.fa-2x.fa-spin
+              br
+              span Cargando información ...
+            .container(v-else)
+              .text-right
+                button.btn.btn-outline-primary.mr-1(@click="showModal()")
+                  i.fa.fa-pencil
+                button.btn.btn-outline-success.mr-1
+                  i.fa.fa-refresh
+                button.btn.btn-outline-danger
+                  i.fa.fa-minus-circle
+              .text-center
+                p(v-if="selectedDay.status")
+                  att-icon.fa-2x(:status='selectedDay.status')
+                  br
+                  | {{selectedDay.status}}
+                p(v-else)
+                  i.fa.fa-2x.fa-question-circle.text-secondary
+                  br
+                  | SIN DEFINIR
+              div(v-if="selectedDay.observaciones")
+                hr
+                b Observaciones:
+                br
+                .border.border-light {{selectedDay.observaciones}}
+              hr
+              h5
+                b {{registros.length}} 
+                | Eventos:
+              ol(v-if="registros && registros.length > 0")
+                li(v-for="evnt in registros")
+                  | {{evnt.hora | zeroFill}}:{{evnt.minuto | zeroFill}} hrs. 
+                  span(v-if="evnt.id === selectedDay.entrada")
+                    i.fa.fa-arrow-right.text-success
+                    |   Entrada
+                  span(v-if="evnt.id === selectedDay.salida")
+                    i.fa.fa-arrow-right.text-primary
+                    |   Salida
+              .alert.alert-warning(v-else) Sin eventos registrados
         div(v-else)
           .card
             .card-header
@@ -147,7 +83,37 @@
                     |  {{AttStatuses[status].name}}
                   td
                     | {{resumen[status]}}
-                  
+        b-modal(
+          id="modal-edit"
+          title="Editar"
+          closeTitle="Cerrar"
+          okTitle="Actualizar"
+          cancelTitle="Cancelar"
+          @ok="updateAtt")
+          .container
+            b-form
+              b-form-group
+                label Marcar la asistencia como
+                b-form-select(id="status" :options="statuses" required v-model="editingDay.status")
+              b-form-group
+                label Observaciones
+                b-form-textarea(
+                  id="observaciones"
+                  v-model="editingDay.observaciones"
+                  placeholder="Observaciones"
+                  :rows="2"
+                  :max-rows="6")
+              div(v-if="selection.length === 1 && registros && registros.length >= 2")
+                h4 Eventos 
+                  button.btn.btn-light(type="button" v-if='registros.length >= 3' @click="changeIn = !changeIn")
+                    span
+                      i.fa.fa-refresh(:class="{'text-success': changeIn, 'text-primary': !changeIn}")
+                      |  Cambiar {{changeIn ? 'Entrada' : 'Salida'}}
+                .container
+                  .row
+                    .col-4(v-for="evnt in registros")
+                      span(v-if="registros.length < 3")  {{evnt.hora | zeroFill}}:{{evnt.minuto | zeroFill}} hrs.
+                      button.btn.mb-1(v-else type="button" :class='isInOrOut(evnt.id)' @click="toggleEvent(evnt)") {{evnt.hora | zeroFill}}:{{evnt.minuto | zeroFill}} hrs.                   
 </template>
 <script>
   import Day from './day'
@@ -168,10 +134,12 @@
         observaciones: null,
         weekdays: moment.weekdaysMin(),
         selectedDay: {},
+        editingDay: {},
         modalTitle: '',
         dayToUpdate: false,
         patchDay: false,
         isLoadingDayDetail: false,
+        changeIn: false,
         tabIndex: 0
       }
     },
@@ -272,7 +240,6 @@
           this.dayToUpdate = d
           this.patchDay = res.data.data[0] || false
         })
-        .finally(() => { this.isLoadingDayDetail = false })
 
         this.$http.get('/eventos', {
           params: {
@@ -289,6 +256,7 @@
             this.$set(this, 'registros', [])
           }
         })
+        .finally(() => { this.isLoadingDayDetail = false })
       },
       updateAtt: function () {
         var toUpdate = []
@@ -298,10 +266,18 @@
           anio: this.selectedDate.year,
           mes: this.selectedDate.month,
           dia: this.dayToUpdate,
-          observaciones: this.selectedDay.observaciones,
-          status: this.selectedDay.status
+          observaciones: this.editingDay.observaciones,
+          status: this.editingDay.status
         }
         let method = this.patchDay ? 'patch' : 'post'
+
+        if (this.patchDay && this.selection.length === 1) {
+          // actualización individual
+          // se agregan los ids de los eventos
+          data.entrada = this.editingDay.entrada
+          data.salida = this.editingDay.salida
+          console.log('individual')
+        }
         if (this.selection.length > 1) {
           this.patchDay = false
           method = 'post'
@@ -313,7 +289,6 @@
             // se hace una separacion inicial
             this.selection.forEach(s => {
               const result = this.asistencia.find(a => a.dia === s)
-              console.log(result)
               if (result) {
                 toUpdate.push(result.id) // se almacena los ids de los registros a actualizar
               } else {
@@ -354,7 +329,7 @@
         }
 
         if (this.patchDay || data.length > 0) {
-          const url = '/asistencia' + (this.patchDay ? `/${this.selectedDay.id}` : '')
+          const url = '/asistencia' + (this.patchDay ? `/${this.editingDay.id}` : '')
           this.$http({
             method,
             url: url,
@@ -428,6 +403,35 @@
           this.tabIndex = 2
         } else {
           this.tabIndex = 0
+        }
+      },
+      showModal () {
+        this.editingDay = JSON.parse(JSON.stringify(this.selectedDay))
+        this.changeIn = false
+        this.$bvModal.show('modal-edit')
+      },
+      isInOrOut (id) {
+        if (this.editingDay.entrada === id) {
+          return 'btn-outline-success'
+        } else if (this.editingDay.salida === id) {
+          return 'btn-outline-primary'
+        } else {
+          return 'btn-light'
+        }
+      },
+      getHourEvent (event) {
+        return parseInt(this.$options.filters.zeroFill(event.hora) + this.$options.filters.zeroFill(event.minuto))
+      },
+      toggleEvent (event) {
+        const entrada = this.getHourEvent(this.editingDay.entradaEvt)
+        const salida = this.getHourEvent(this.editingDay.salidaEvt)
+        const selected = this.getHourEvent(event)
+        if (this.changeIn && selected < salida) {
+          this.editingDay.entradaEvt = event
+          this.editingDay.entrada = event.id
+        } else if (!this.changeIn && selected > entrada) {
+          this.editingDay.salidaEvt = event
+          this.editingDay.salida = event.id
         }
       }
     },
@@ -534,5 +538,9 @@ ul {list-style-type: none;}
     padding: 5px;
     background: #1abc9c;
     color: white !important
+}
+
+.card-body {
+  padding: 5px;
 }
 </style>

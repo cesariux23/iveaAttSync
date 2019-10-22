@@ -7,7 +7,7 @@
         .col-xl-6.col-event
             .row(:class='eventsClass')
               .col-12(v-if= "evento.entradaEvt" title="Entrada")
-                span.text-info {{evento.entradaEvt.hora | zeroFill}}:{{evento.entradaEvt.minuto | zeroFill}}
+                span.text-success {{evento.entradaEvt.hora | zeroFill}}:{{evento.entradaEvt.minuto | zeroFill}}
               .col-12(v-if= "evento.salidaEvt" title="Salida")
                 span.text-primary {{evento.salidaEvt.hora | zeroFill}}:{{evento.salidaEvt.minuto | zeroFill}}
 </template>
