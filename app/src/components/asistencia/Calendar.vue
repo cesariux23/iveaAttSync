@@ -7,7 +7,7 @@
           .row.weekdays
             span.text-uppercase(v-for="wd in weekdays") {{wd}}
           .row.days
-            .calendar-day(v-for="d in dias" v-bind:class="dayClass(d)"  @click="handleDayClick(d)")
+            .calendar-day(v-for="d in dias" v-bind:class="dayClass(d)"  v-on=" d ? { 'click': () => handleDayClick(d) } : {} ")
               .day-label.position-absolute(:class="{selected: selection.indexOf(d) >= 0 }") 
                 span {{d}}
               day(v-bind:eventos="asistencia | attEvent(d)")
@@ -37,34 +37,40 @@
                   i.fa.fa-refresh
                 button.btn.btn-outline-danger
                   i.fa.fa-minus-circle
-              .text-center
-                p(v-if="selectedDay.status")
-                  att-icon.fa-2x(:status='selectedDay.status')
+              div(v-if="selection.length === 1")
+                .text-center
+                  p(v-if="selectedDay.status")
+                    att-icon.fa-2x(:status='selectedDay.status')
+                    br
+                    | {{selectedDay.status}}
+                  p(v-else)
+                    i.fa.fa-2x.fa-question-circle.text-secondary
+                    br
+                    | SIN DEFINIR
+                div(v-if="selectedDay.observaciones")
+                  hr
+                  b Observaciones:
                   br
-                  | {{selectedDay.status}}
-                p(v-else)
-                  i.fa.fa-2x.fa-question-circle.text-secondary
-                  br
-                  | SIN DEFINIR
-              div(v-if="selectedDay.observaciones")
+                  .border.border-light {{selectedDay.observaciones}}
                 hr
-                b Observaciones:
+                h5
+                  b {{registros.length}} 
+                  | Eventos:
+                ol(v-if="registros && registros.length > 0")
+                  li(v-for="evnt in registros")
+                    | {{evnt.hora | zeroFill}}:{{evnt.minuto | zeroFill}} hrs. 
+                    span(v-if="evnt.id === selectedDay.entrada")
+                      i.fa.fa-arrow-right.text-success
+                      |   Entrada
+                    span(v-if="evnt.id === selectedDay.salida")
+                      i.fa.fa-arrow-right.text-primary
+                      |   Salida
+                .alert.alert-warning(v-else) Sin eventos registrados
+              div(v-else)
                 br
-                .border.border-light {{selectedDay.observaciones}}
-              hr
-              h5
-                b {{registros.length}} 
-                | Eventos:
-              ol(v-if="registros && registros.length > 0")
-                li(v-for="evnt in registros")
-                  | {{evnt.hora | zeroFill}}:{{evnt.minuto | zeroFill}} hrs. 
-                  span(v-if="evnt.id === selectedDay.entrada")
-                    i.fa.fa-arrow-right.text-success
-                    |   Entrada
-                  span(v-if="evnt.id === selectedDay.salida")
-                    i.fa.fa-arrow-right.text-primary
-                    |   Salida
-              .alert.alert-warning(v-else) Sin eventos registrados
+                h4 Días seleccionados:
+                .alert.alert-warning
+                  span.mr-1(v-for="(d, i) in selection") {{d}}{{i < selection.length-1 ? ',' : '.'}}
         div(v-else)
           .card
             .card-header
@@ -85,7 +91,7 @@
                     | {{resumen[status]}}
         b-modal(
           id="modal-edit"
-          title="Editar"
+          :title="modalTitle"
           closeTitle="Cerrar"
           okTitle="Actualizar"
           cancelTitle="Cancelar"
@@ -93,7 +99,7 @@
           .container
             b-form
               b-form-group
-                label Marcar la asistencia como
+                label Marcar como
                 b-form-select(id="status" :options="statuses" required v-model="editingDay.status")
               b-form-group
                 label Observaciones
@@ -135,7 +141,7 @@
         weekdays: moment.weekdaysMin(),
         selectedDay: {},
         editingDay: {},
-        modalTitle: '',
+        modalTitle: 'Editar',
         dayToUpdate: false,
         patchDay: false,
         isLoadingDayDetail: false,
@@ -408,6 +414,9 @@
       showModal () {
         this.editingDay = JSON.parse(JSON.stringify(this.selectedDay))
         this.changeIn = false
+        this.modalTitle = this.selection.length > 1
+          ? 'Modificar ' + this.selection.length + ' días'
+          : this.selection[0] + ' de ' + this.months[this.selectedDate.month - 1]
         this.$bvModal.show('modal-edit')
       },
       isInOrOut (id) {
