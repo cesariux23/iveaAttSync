@@ -2,6 +2,8 @@
   .container
     h1 Dispositivos en línea
     br
+    button.btn.btn-primary(@click="reeval()") Evaluar eventos pendientes
+    hr
     table.table
       thead
         tr
@@ -28,6 +30,12 @@ export default {
   methods: {
     sync (id) {
       this.$socket.emit('reqSync', id)
+    },
+    reeval () {
+      this.$http.post('/asistencia/resync')
+      .then(() => {
+        alert('hecho')
+      })
     }
   },
   watch: {

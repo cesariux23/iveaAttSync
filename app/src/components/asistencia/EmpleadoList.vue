@@ -16,11 +16,9 @@
         .empleados-list
           b-list-group.border-0
             b-list-group-item.container.border-right-0( v-for="emp in filteredEmpleados" :key="emp.userid" :to="{ name: 'detalleAsistencia', params: Object.assign({ id: emp.userid }) }" replace)
-              .row
-                .col-2.px-0
-                  h6.text-center
+              div
+                  p
                     b {{ emp.userid }}
-                .col
                   p {{emp.nombre}}
                   p.text.small {{emp.adscripcion}}
     nav.navbar.navbar-light.bg-light.position-fixed-bottom

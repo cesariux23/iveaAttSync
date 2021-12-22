@@ -14,7 +14,15 @@ namespace     = cls.createNamespace('ivea-att-sync');
 Sequelize.useCLS(namespace);
 
 if (config.use_env_variable) {
-  var sequelize = new Sequelize(process.env[config.use_env_variable]);
+  var sequelize = new Sequelize(
+    process.env[config.use_env_variable],
+    {pool: {
+      max: 100,
+      min: 0,
+      // @note https://github.com/sequelize/sequelize/issues/8133#issuecomment-359993057
+      acquire: 100*1000,
+    }}
+  );
 } else {
   console.log('iniciando conexión')
   var sequelize = new Sequelize(config);
