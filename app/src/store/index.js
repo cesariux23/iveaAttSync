@@ -78,6 +78,12 @@ const ATTSTATUS = {
     icon: 'times',
     color: 'danger'
   },
+  'ECONOMICO': {
+    name: 'PERMISO ECONOMICO',
+    abb: '-',
+    icon: 'circle-thin',
+    color: 'secondary'
+  },
   'PENDIENTE': {
     name: 'PENDIENTE',
     abb: '-',
